@@ -14,6 +14,7 @@ body {
     margin: 0;
     overflow-x: hidden;
 }
+
 .header {
     background: rgba(30, 30, 30, 0.9);
     padding: 20px;
@@ -23,6 +24,7 @@ body {
     z-index: 100;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
+
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -30,6 +32,7 @@ body {
     max-width: 1200px;
     margin: 0 auto;
 }
+
 .logo {
     font-size: 28px;
     font-weight: 700;
@@ -40,25 +43,30 @@ body {
     text-transform: uppercase;
     letter-spacing: 2px;
 }
+
 .nav-links {
     list-style: none;
     display: flex;
     gap: 20px;
 }
+
 .nav-links a {
     color: white;
     text-decoration: none;
     font-weight: bold;
 }
+
 .container {
     padding: 40px;
 }
+
 .title {
     font-size: 32px;
-    color: #ffcc00;
+    color: #ffffff;
     text-transform: uppercase;
     margin-bottom: 20px;
 }
+
 .grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -66,6 +74,7 @@ body {
     max-width: 1200px;
     margin: 0 auto;
 }
+
 .card {
     background: rgba(255, 255, 255, 0.05);
     padding: 30px;
@@ -83,12 +92,10 @@ body {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, 0.1),
-        transparent
-    );
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.1),
+            transparent);
     transition: 0.5s;
 }
 
@@ -100,6 +107,7 @@ body {
 .card:hover::before {
     left: 100%;
 }
+
 .image {
     background: #333;
     height: 150px;
@@ -110,6 +118,7 @@ body {
     font-size: 18px;
     font-weight: bold;
 }
+
 .button {
     margin-top: 10px;
     padding: 12px 30px;
@@ -133,12 +142,10 @@ body {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, 0.3),
-        transparent
-    );
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.3),
+            transparent);
     transition: 0.5s;
 }
 
@@ -150,13 +157,15 @@ body {
 .button:hover::before {
     left: 100%;
 }
+
 .button:hover {
     background: #e6b800;
 }
+
 .hero {
     height: 400px;
-    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
-                url('assets/images/hero-bg.jpg');
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+        url('assets/images/hero-bg.jpg');
     background-size: cover;
     background-position: center;
     display: flex;
@@ -284,6 +293,7 @@ body {
         opacity: 0;
         transform: translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -294,9 +304,11 @@ body {
     0% {
         background-position: 0% 50%;
     }
+
     50% {
         background-position: 100% 50%;
     }
+
     100% {
         background-position: 0% 50%;
     }
