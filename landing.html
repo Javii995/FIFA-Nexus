@@ -3,63 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Selectie</title>
+    <title>FIFA Nexus - Game Selectie</title>
     <link rel="stylesheet" href="styles/styles.css">
-    <script defer src="script.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
     <header class="header">
         <nav class="navbar">
-            <div class="logo">EA SPORTS FC</div>
+            <div class="logo">FIFA Nexus</div>
             <ul class="nav-links">
-                <li><a href="#">Home</a></li>
-                <li><a href="#">Games</a></li>
-                <li><a href="#">Nieuws</a></li>
-                <li><a href="#">Community</a></li>
-                <li><a href="#">Help</a></li>
+                <li><a href="#"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="#"><i class="fas fa-gamepad"></i> Games</a></li>
+                <li><a href="#"><i class="fas fa-info-circle"></i> About</a></li>
             </ul>
         </nav>
     </header>
-    
-    <main class="container">
-    <h1 class="title">Game Selectie</h1>
-    
-    <div class="grid">
-        <div class="card">
-            <div class="image">img Project 1</div>
-            <p class="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-            <button class="button">Aanmelden</button>
-        </div>
-        <div class="card">
-            <div class="image">img Project 2</div>
-            <p class="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-            <button class="button">Aanmelden</button>
-        </div>
-        <div class="card">
-            <div class="image">img Project 3</div>
-            <p class="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-            <button class="button">Aanmelden</button>
-        </div>
-        <div class="card">
-            <div class="image">img Project 4</div>
-            <p class="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-            <button class="button">Aanmelden</button>
-        </div>
-        <div class="card">
-            <div class="image">img Project 5</div>
-            <p class="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-            <button class="button">Aanmelden</button>
-        </div>
-        <div class="card">
-            <div class="image">img Project 6</div>
-            <p class="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-            <button class="button">Aanmelden</button>
-        </div>
-    </div>
-</main>
 
-<footer class="footer">
-    <p>&copy; 2025 EA SPORTS FC - Alle rechten voorbehouden</p>
-</footer>
+    <section class="hero">
+        <div class="hero-content">
+            <h2>Welkom bij FIFA Nexus</h2>
+            <p>De ultieme bestemming voor FIFA fans</p>
+            <a href="#" class="button hero-button">Ontdek Meer</a>
+        </div>
+    </section>
+
+    <main class="container">
+        <h1 class="title">Selecteer Je Game</h1>
+        <div class="grid">
+            <div class="card">
+                <div class="image" style="background-image: url('assets/images/fifa23.jpg');">
+                    <div class="overlay">
+                        <h3>FIFA 23</h3>
+                        <p>De nieuwste editie</p>
+                    </div>
+                </div>
+                <button class="button">Selecteer <i class="fas fa-chevron-right"></i></button>
+            </div>
+            <div class="card">
+                <div class="image" style="background-image: url('assets/images/fifa22.jpg');">
+                    <div class="overlay">
+                        <h3>FIFA 22</h3>
+                        <p>HyperMotion Technology</p>
+                    </div>
+                </div>
+                <button class="button">Selecteer <i class="fas fa-chevron-right"></i></button>
+            </div>
+            <div class="card">
+                <div class="image" style="background-image: url('assets/images/fifa21.jpg');">
+                    <div class="overlay">
+                        <h3>FIFA 21</h3>
+                        <p>Volgende Level Gameplay</p>
+                    </div>
+                </div>
+                <button class="button">Selecteer <i class="fas fa-chevron-right"></i></button>
+            </div>
+            <div class="card">
+                <div class="image" style="background-image: url('assets/images/fifa20.jpg');">
+                    <div class="overlay">
+                        <h3>FIFA 20</h3>
+                        <p>VOLTA Football</p>
+                    </div>
+                </div>
+                <button class="button">Selecteer <i class="fas fa-chevron-right"></i></button>
+            </div>
+            <div class="card">
+                <div class="image" style="background-image: url('assets/images/fifa19.jpg');">
+                    <div class="overlay">
+                        <h3>FIFA 19</h3>
+                        <p>UEFA Champions League</p>
+                    </div>
+                </div>
+                <button class="button">Selecteer <i class="fas fa-chevron-right"></i></button>
+            </div>
+            <div class="card">
+                <div class="image" style="background-image: url('assets/images/fifa18.jpg');">
+                    <div class="overlay">
+                        <h3>FIFA 18</h3>
+                        <p>The Journey: Hunter Returns</p>
+                    </div>
+                </div>
+                <button class="button">Selecteer <i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Over Ons</h4>
+                <p>FIFA Nexus is de ultieme bestemming voor FIFA fans wereldwijd.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Snelle Links</h4>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Games</a></li>
+                    <li><a href="#">Over Ons</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Volg Ons</h4>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 FIFA Nexus. Alle rechten voorbehouden.</p>
+        </div>
+    </footer>
 </body>
 </html>
