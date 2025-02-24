@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FIFA Nexus - Favoriete League</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script defer src="script.js"></script>
+</head>
+
+<body>
+    <header class="header">
+        <nav class="navbar">
+            <div class="logo">FIFA Nexus</div>
+            <a href="index.html" class="home-icon"><i class="fas fa-home"></i></a>
+            <ul class="nav-links">
+                <li><a href="#"><i class="fas fa-users"></i> Clubs</a></li>
+                <li><a href="#"><i class="fas fa-user"></i> My Profile</a></li>
+                <li><a href="#"><i class="fas fa-ban"></i> Blacklisted Clubs</a></li>
+                <li><a href="#" class="button fave-list">Fave List</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main class="container">
+        <h1>🏆 Jouw Favoriete League 🏆</h1>
+        <div class="league-card">
+            <div class="image">
+                <img src="assets/league.png" alt="League Embleem">
+            </div>
+            <h3>League Naam</h3>
+            <p><strong>Info:</strong> Dit is jouw favoriete league! Bekijk hieronder de deelnemende clubs.</p>
+            <button class="remove">❌ Verwijder uit favorieten</button>
+        </div>
+        
+        <h2>Clubs in deze league:</h2>
+        <div class="grid">
+            <div class="card">
+                <h3>Club 1</h3>
+                <p>Land: Spanje</p>
+                <button class="add-favorite">⭐ Toevoegen aan favorieten</button>
+            </div>
+            <div class="card">
+                <h3>Club 2</h3>
+                <p>Land: Engeland</p>
+                <button class="add-favorite">⭐ Toevoegen aan favorieten</button>
+            </div>
+            <div class="card">
+                <h3>Club 3</h3>
+                <p>Land: Duitsland</p>
+                <button class="add-favorite">⭐ Toevoegen aan favorieten</button>
+            </div>
+            <div class="card">
+                <h3>Club 4</h3>
+                <p>Land: Italië</p>
+                <button class="add-favorite">⭐ Toevoegen aan favorieten</button>
+            </div>
+        </div>
+    </main>
+    
+    <footer class="footer">
+        <p>&copy; 2025 FIFA Nexus. Alle rechten voorbehouden.</p>
+    </footer>
+</body>
+</html>
