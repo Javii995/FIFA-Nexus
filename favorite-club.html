@@ -24,43 +24,169 @@
         </nav>
     </header>
     
-    <main class="container">
-        <h1>⭐ Jouw Favoriete Clubs ⭐</h1>
-        <input type="text" class="search-bar" placeholder="Zoek een club...">
+    
+
+
+
+
+
+
+
+ <main class="container">
+        <h1 class="title">⭐ JOUW FAVORIETE CLUBS ⭐</h1>
         
-        <div class="grid">
-            <div class="card">
-                <div class="image"> <img src="assets/club1.png" alt="Club 1"> </div>
-                <h3>Clubnaam 1</h3>
-                <p>Druk op de club voor meer informatie.</p>
-                <div class="actions">
-                    <button class="remove">❌ Verwijderen uit lijst</button>
-                    <button class="view-details"><i class="fas fa-eye"></i></button>
+      
+
+
+        <div class="search-container">
+            <input type="text" class="search-bar" placeholder="Zoek een nieuwe club om toe te voegen..." id="clubSearch">
+            <button class="gradient-button" id="addClubBtn">+ TOEVOEGEN</button>
+        </div>
+        
+      
+        <div class="login-message" id="loginMessage" style="display: none;">
+            <p>Je moet eerst inloggen om je favoriete clubs te bekijken of beheren.</p>
+            <a href="login.html" class="button">Log in</a>
+        </div>
+
+        <div class="grid" id="favoriteClubsGrid">
+          
+            <div class="card club-card" data-club-id="1">
+                <div class="image" style="background-image: url('assets/image.Barcelona.jpg');">
+                    <div class="overlay">
+                        <h3>FC Barcelona</h3>
+                        <p>Spanje</p>
+                    </div>
+                </div>
+                <div class="club-details">
+                    <h3>FC Barcelona</h3>
+                    <p>Druk voor meer informatie</p>
+                    <div class="stats">
+                        <span><i class="fas fa-eye"></i> Gezien: <span class="seen-count">3</span> keer</span>
+                    </div>
+                    <div class="actions">
+                        <button class="gradient-button seen-btn"><i class="fas fa-plus"></i></button>
+                        <button class="gradient-button remove-btn"><i class="fas fa-trash"></i></button>
+                    </div>
                 </div>
             </div>
-            <div class="card">
-                <div class="image"> <img src="assets/club2.png" alt="Club 2"> </div>
-                <h3>Clubnaam 2</h3>
-                <p>Druk op de club voor meer informatie.</p>
-                <div class="actions">
-                    <button class="remove">❌ Verwijderen uit lijst</button>
-                    <button class="view-details"><i class="fas fa-eye"></i></button>
+            
+    
+
+            <div class="card club-card" data-club-id="2">
+                <div class="image" style="background-image: url('assets/image.Liverpool.png');">
+                    <div class="overlay">
+                        <h3>Liverpool FC</h3>
+                        <p>Engeland</p>
+                    </div>
+                </div>
+                <div class="club-details">
+                    <h3>Liverpool FC</h3>
+                    <p>Druk voor meer informatie</p>
+                    <div class="stats">
+                        <span><i class="fas fa-eye"></i> Gezien: <span class="seen-count">1</span> keer</span>
+                    </div>
+                    <div class="actions">
+                        <button class="gradient-button seen-btn"><i class="fas fa-plus"></i></button>
+                        <button class="gradient-button remove-btn"><i class="fas fa-trash"></i></button>
+                    </div>
                 </div>
             </div>
-            <div class="card">
-                <div class="image"> <img src="assets/club3.png" alt="Club 3"> </div>
-                <h3>Clubnaam 3</h3>
-                <p>Druk op de club voor meer informatie.</p>
-                <div class="actions">
-                    <button class="remove">❌ Verwijderen uit lijst</button>
-                    <button class="view-details"><i class="fas fa-eye"></i></button>
+          
+            <div class="card club-card" data-club-id="3">
+                <div class="image" style="background-image: url('assets/image.Bayern.png');">
+                    <div class="overlay">
+                        <h3>Bayern München</h3>
+                        <p>Duitsland</p>
+                    </div>
+                </div>
+                <div class="club-details">
+                    <h3>Bayern München</h3>
+                    <p>Druk voor meer informatie</p>
+                    <div class="stats">
+                        <span><i class="fas fa-eye"></i> Gezien: <span class="seen-count">2</span> keer</span>
+                    </div>
+                    <div class="actions">
+                        <button class="gradient-button seen-btn"><i class="fas fa-plus"></i></button>
+                        <button class="gradient-button remove-btn"><i class="fas fa-trash"></i></button>
+                    </div>
                 </div>
             </div>
         </div>
+        
+        <div class="modal" id="clubDetailsModal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <div class="club-modal-header">
+                    <img src="" alt="Club emblem" id="modalClubEmblem">
+                    <h2 id="modalClubName">Clubnaam</h2>
+                </div>
+                <div class="club-info">
+                    <p><strong>Land:</strong> <span id="modalClubCountry">Land</span></p>
+                    <p><strong>Competitie:</strong> <span id="modalClubLeague">League</span></p>
+                    <p><strong>Opgericht:</strong> <span id="modalClubFounded">Jaar</span></p>
+                    <p><strong>Stadion:</strong> <span id="modalClubStadium">Stadion</span></p>
+                </div>
+                <h3>Spelers</h3>
+                <div class="players-grid" id="modalClubPlayers">
+  
+                </div>
+                <div class="modal-actions">
+                    <button class="gradient-button seen-btn" id="modalSeenBtn"><i class="fas fa-plus"></i> Gezien in het echt</button>
+                    <button class="gradient-button" id="modalCloseBtn">Sluiten</button>
+                </div>
+            </div>
+        </div>
+        
+
+        <div class="no-favorites" id="noFavoritesMessage" style="display: none;">
+            <p>Je hebt nog geen favoriete clubs toegevoegd.</p>
+            <p>Speel de <a href="quiz.html">Quiz</a> of gebruik de zoekbalk hierboven om clubs toe te voegen!</p>
+        </div>
     </main>
-    
+
+
+
+
+
+
+
+
+
+
+
+
+
     <footer class="footer">
-        <p>&copy; 2025 FIFA Nexus. Alle rechten voorbehouden.</p>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>FIFA Nexus</h4>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">Over Ons</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Features</h4>
+                <ul>
+                    <li><a href="quiz.html">Club Quiz</a></li>
+                    <li><a href="favorite-club.html">Favoriete Clubs</a></li>
+                    <li><a href="favorite-league.html">Favoriete League</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Volg Ons</h4>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 FIFA Nexus. Alle rechten voorbehouden.</p>
+        </div>
     </footer>
 </body>
 </html>
