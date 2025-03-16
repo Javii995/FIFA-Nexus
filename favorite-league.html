@@ -22,42 +22,82 @@
             </ul>
         </nav>
     </header>
-    
+
+
     <main class="container">
-        <h1>🏆 Jouw Favoriete League 🏆</h1>
-        <div class="league-card">
-            <div class="image">
-                <img src="assets/league.png" alt="League Embleem">
-            </div>
-            <h3>League Naam</h3>
-            <p><strong>Info:</strong> Dit is jouw favoriete league! Bekijk hieronder de deelnemende clubs.</p>
-            <button class="remove">❌ Verwijder uit favorieten</button>
+        <h1 class="title">🏆 JOUW FAVORIETE LEAGUE 🏆</h1>
+        
+        
+        <div class="league-container" id="leagueContainer">
+            <img src="assets/image.leagueLaLiga.png" alt="La Liga" class="league-logo">
+            <h2 class="league-title">League La Liga</h2>
+            <p class="league-info"><strong>Info:</strong> Dit is jouw favoriete league! Bekijk hieronder de deelnemende clubs.</p>
+            <button class="remove-button" id="removeLeagueBtn">
+                <span class="icon">❌</span>
+                Verwijder uit favorieten
+            </button>
         </div>
         
-        <h2>Clubs in deze league:</h2>
-        <div class="grid">
-            <div class="card">
-                <h3>Club 1</h3>
-                <p>Land: Spanje</p>
-                <button class="add-favorite">⭐ Toevoegen aan favorieten</button>
-            </div>
-            <div class="card">
-                <h3>Club 2</h3>
-                <p>Land: Engeland</p>
-                <button class="add-favorite">⭐ Toevoegen aan favorieten</button>
-            </div>
-            <div class="card">
-                <h3>Club 3</h3>
-                <p>Land: Duitsland</p>
-                <button class="add-favorite">⭐ Toevoegen aan favorieten</button>
-            </div>
-            <div class="card">
-                <h3>Club 4</h3>
-                <p>Land: Italië</p>
-                <button class="add-favorite">⭐ Toevoegen aan favorieten</button>
+
+      
+        <div class="clubs-section" id="clubsSection">
+            <h2 class="section-title">Clubs in deze league:</h2>
+            
+            <div class="grid" id="clubsGrid">
+                <!-- Club 1 -->
+                <div class="card club-card" data-club-id="1">
+                    <div class="image" style="background-image: url('assets/clubs/barcelona.jpg');">
+                        <div class="overlay">
+                            <h3>FC Barcelona</h3>
+                            <p>Spanje</p>
+                        </div>
+                    </div>
+                    <h3>FC Barcelona</h3>
+                    <p>Land: Spanje</p>
+                    <button class="add-favorite">⭐ Toevoegen aan favorieten</button>
+                </div>
+                
+                <!-- Club 2 -->
+                <div class="card club-card" data-club-id="2">
+                    <div class="image" style="background-image: url('assets/clubs/realmadrid.jpg');">
+                        <div class="overlay">
+                            <h3>Real Madrid</h3>
+                            <p>Spanje</p>
+                        </div>
+                    </div>
+                    <h3>Real Madrid</h3>
+                    <p>Land: Spanje</p>
+                    <button class="add-favorite">⭐ Toevoegen aan favorieten</button>
+                </div>
+                
+                <!-- Club 3 -->
+                <div class="card club-card" data-club-id="3">
+                    <div class="image" style="background-image: url('assets/clubs/atletico.jpg');">
+                        <div class="overlay">
+                            <h3>Atlético Madrid</h3>
+                            <p>Spanje</p>
+                        </div>
+                    </div>
+                    <h3>Atlético Madrid</h3>
+                    <p>Land: Spanje</p>
+                    <button class="add-favorite">⭐ Toevoegen aan favorieten</button>
+                </div>
             </div>
         </div>
+        
+       
+        <div class="no-league-message" id="noLeagueMessage">
+            <h2>Je hebt nog geen favoriete league</h2>
+            <p>Speel de <a href="quiz.html">Quiz</a> om een league toe te voegen als favoriet!</p>
+        </div>
     </main>
+    
+
+
+
+
+
+
     
     <footer class="footer">
         <p>&copy; 2025 FIFA Nexus. Alle rechten voorbehouden.</p>
