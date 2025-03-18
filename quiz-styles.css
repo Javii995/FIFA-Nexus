@@ -1,0 +1,181 @@
+/* Basisinstellingen */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Oswald', sans-serif;
+    background: #1b5e20; /* Donkergroen, stadiongevoel */
+    color: #fff;
+  }
+  
+  /* Voetbalveld-achtergrond met subtiele grasstructuur */
+  .game-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #388e3c 25%, #2e7d32 25%, #2e7d32 50%, #388e3c 50%, #388e3c 75%, #2e7d32 75%, #2e7d32 100%);
+    background-size: 56.57px 56.57px;
+    padding: 20px;
+  }
+  
+  /* Header met scoreboard */
+  .game-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 10px 20px;
+    margin-bottom: 20px;
+    border: 2px solid #fff;
+    border-radius: 10px;
+  }
+  
+  .scoreboard {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+  }
+  
+  .scoreboard .team-logo img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+  }
+  
+  .scoreboard .score {
+    font-size: 2rem;
+    margin: 0 15px;
+    font-weight: bold;
+  }
+  
+  /* Navigatie */
+  .game-nav ul {
+    list-style: none;
+    display: flex;
+    gap: 15px;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .game-nav ul li a {
+    text-decoration: none;
+    color: #fff;
+    font-size: 1.1rem;
+    padding: 5px 10px;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+  }
+  
+  .game-nav ul li a:hover {
+    border: 2px solid #fff;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+  }
+  
+  /* Main quiz sectie */
+  .game-main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .quiz-section {
+    text-align: center;
+    max-width: 800px;
+    width: 100%;
+  }
+  
+  .quiz-title {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px #000;
+    color: #ffeb3b;  /* Heldere geel voor energie */
+  }
+  
+  /* Quiz Box met moderne, sportieve look */
+  .quiz-box {
+    background: rgba(0, 0, 0, 0.7);
+    border: 3px solid #ffeb3b;
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 0 20px rgba(255, 235, 59, 0.7);
+  }
+  
+  .quiz-question {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    color: #ffffff;
+  }
+  
+  .quiz-image img {
+    width: 200px;
+    height: 200px;
+    object-fit: contain;
+    border: 3px solid #ffeb3b;
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
+  
+  /* Opties in grid-stijl voor een moderne look */
+  .options-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+  }
+  
+  .quiz-option {
+    background: #388e3c;
+    border: 2px solid #fff;
+    color: #fff;
+    padding: 10px;
+    font-size: 1.2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.3s;
+  }
+  
+  .quiz-option:hover {
+    background: #43a047;
+    transform: scale(1.05);
+  }
+  
+  /* Footer met game control */
+  .game-footer {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .game-control {
+    background: #ffeb3b;
+    color: #000;
+    border: 2px solid #fff;
+    padding: 10px 20px;
+    font-size: 1.5rem;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.3s;
+  }
+  
+  .game-control:hover {
+    background: #fdd835;
+    transform: scale(1.1);
+  }
+  
+  /* Responsive ontwerp */
+  @media (max-width: 768px) {
+    .scoreboard .score {
+      font-size: 1.5rem;
+    }
+    .quiz-image img {
+      width: 150px;
+      height: 150px;
+    }
+    .quiz-title {
+      font-size: 2rem;
+    }
+    .quiz-question {
+      font-size: 1.5rem;
+    }
+  }
+  
