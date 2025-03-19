@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FIFA Nexus - Club Quiz</title>
-    <link rel="stylesheet" href="styles/styles.css">
+    <title>FIFA Nexus - Leaderboard</title>
+    <link rel="stylesheet" href="quiz-landing-styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
-   
-    
+
     <header class="header">
         <nav class="navbar">
             <div class="logo">
@@ -23,37 +22,63 @@
                 <li><a href="blacklisted.html"><i class="fas fa-ban"></i> Blacklisted Clubs</a></li>
                 <li><a href="favorite-league.html"><i class="fas fa-trophy"></i> Favoriete League</a></li>
                 <li><a href="quiz-landing.html"><i class="fas fa-question-circle"></i> Quiz</a></li>
-            
+                <li><a href="leaderboard.html" class="active"><i class="fas fa-chart-line"></i> Leaderboard</a></li>
             </ul>
         </nav>
     </header>
-    
-    
+
     <main class="container">
-        <h1>⚽ Welkom bij de FIFA Nexus Club Quiz! 🎮</h1>
-        <div class="quiz-intro">
-            <h2>🔥 Test je kennis en word de ultieme voetbalexpert! 🔥</h2>
-            <p>Denk jij alle voetbalclubs en leagues te herkennen? Toon je skills, scoor punten en strijd voor de hoogste plek op het klassement! 🏆</p>
-            <p>🏅 **Jouw missie:** Selecteer de juiste emblemen, verzamel favorieten en vermijd je minst geliefde clubs!</p>
-            <p>👍 **Favoriet:** Klik op een club om deze aan je favorieten toe te voegen en bouw je droomteam!</p>
-            <p>👎 **Blacklist:** Markeer clubs die je liever niet ziet en ze verdwijnen uit je quiz!</p>
+        <h1>🏆 FIFA Nexus Leaderboard 🏆</h1>
+        <div class="leaderboard-intro">
+            <h2>Bekijk de top spelers!</h2>
+            <p>Wie heeft de hoogste score gehaald in de FIFA Nexus Club Quiz? Strijd voor de top en verbeter je positie!</p>
         </div>
-<!--         
-        <div class="flags">
-            <div class="flag">🏴</div>
-            <div class="flag">🏴</div>
-            <div class="flag">🏴</div>
-            <div class="flag">🏴</div>
-        </div> -->
-        
+
+        <table class="leaderboard">
+            <thead>
+                <tr>
+                    <th>Positie</th>
+                    <th>Speler</th>
+                    <th>Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>🥇 1</td>
+                    <td>MaxVoetbal</td>
+                    <td>9850</td>
+                </tr>
+                <tr>
+                    <td>🥈 2</td>
+                    <td>Legend27</td>
+                    <td>9420</td>
+                </tr>
+                <tr>
+                    <td>🥉 3</td>
+                    <td>SoccerKing</td>
+                    <td>9100</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>GoalHunter</td>
+                    <td>8750</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>FIFAPro</td>
+                    <td>8600</td>
+                </tr>
+            </tbody>
+        </table>
+
         <div class="quiz-actions">
-            <a href="quiz.html" class="button">🎮 Start de uitdaging!</a>
-            
+            <a href="quiz.html" class="button">🎮 Speel opnieuw!</a>
         </div>
     </main>
-    
+
     <footer class="footer">
         <p>&copy; 2025 FIFA Nexus. Alle rechten voorbehouden.</p>
     </footer>
+
 </body>
 </html>
