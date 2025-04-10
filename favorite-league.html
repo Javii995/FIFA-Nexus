@@ -31,10 +31,23 @@
     </header>
     
 
-    <main class="container">
-        <h1 class="title">🏆 JOUW FAVORIETE LEAGUE 🏆</h1>
+    <main class="container" style="background-image: url('assets/images-favo-pages/image.Achtergrond-favo-club.png'); background-blend-mode: overlay;">
+    
+    
+        <h1 class="trofee fav club beweging" id="favorite-league-title">
+            <span style="display: inline-block; animation: pulsate 1s infinite alternate">🏆</span> 
+            JOUW FAVORIETE LEAGUES 
+            <span style="display: inline-block; animation: pulsate 1s infinite alternate">🏆</span>
+        </h1>
         
-        
+        <style>
+            @keyframes pulsate {
+                0% { transform: scale(1); }
+                100% { transform: scale(1.5); }
+            }
+        </style>
+
+
         <div class="league-container" id="leagueContainer">
             <img src="assets/images-favo-pages/image.leagueLaLiga.png"  width="200px" alt="La Liga" class="league-logo">
             <h2 class="league-title">League La Liga</h2>

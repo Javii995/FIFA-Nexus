@@ -13,9 +13,6 @@
 <body>
  
 
-   
-    
-
 
 <header class="header">
     <nav class="navbar">
@@ -35,12 +32,21 @@
 
 
 
-
- <main class="container">
-        <h1 class="title">⭐ JOUW FAVORIETE CLUBS ⭐</h1>
+<main class="container" style="background-image: url('assets/images-favo-pages/image.Achtergrond-favo-club.png'); background-blend-mode: overlay;">
+   
+    <h1 class="title">
+        <span style="display: inline-block; animation: spin 2s linear infinite">⭐</span> 
+        JOUW FAVORIETE CLUBS 
+        <span style="display: inline-block; animation: spin 2s linear infinite">⭐</span>
+    </h1>
+    
+    <style>
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    </style>
         
-      
-
 
         <div class="search-container">
             <input type="text" class="search-bar" placeholder="Zoek een nieuwe club om toe te voegen..." id="clubSearch">
