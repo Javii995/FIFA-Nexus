@@ -1,0 +1,128 @@
+/* Basisinstellingen */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Oswald', sans-serif;
+    background: linear-gradient(135deg, #388e3c 25%, #2e7d32 25%, #2e7d32 50%, #388e3c 50%, #388e3c 75%, #2e7d32 75%, #2e7d32 100%);
+    background-size: 56.57px 56.57px;
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Header met navigatie */
+  .header {
+    display: flex;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 10px 20px;
+    margin-bottom: 20px;
+    border: 2px solid #fff;
+    border-radius: 10px;
+  }
+  .navbar {
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+  }
+  .logo {
+    font-size: 1.8rem;
+    color: #ffeb3b;
+    font-weight: bold;
+  }
+  
+  /* Auth sectie */
+  .auth-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+  }
+  .auth-box {
+    background: rgba(0,0,0,0.7);
+    border: 3px solid #ffeb3b;
+    border-radius: 15px;
+    padding: 2rem;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(255,235,59,0.7);
+  }
+  .auth-box h2 {
+    margin-bottom: 15px;
+    font-size: 2rem;
+    color: #ffeb3b;
+    text-shadow: 2px 2px 4px #000;
+  }
+  .auth-box p {
+    margin-bottom: 20px;
+    font-size: 1rem;
+  }
+  .auth-box input[type="email"] {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 2px solid #fff;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    font-size: 1rem;
+    transition: background 0.3s;
+  }
+  .auth-box input::placeholder {
+    color: #ccc;
+  }
+  .auth-box input:focus {
+    background: rgba(255,255,255,0.2);
+    outline: none;
+  }
+  
+  /* Knop */
+  .button {
+    display: inline-block;
+    background: #ffeb3b;
+    color: #000;
+    border: 2px solid #fff;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 8px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.3s;
+    margin-top: 10px;
+  }
+  .button:hover {
+    background: #fdd835;
+    transform: scale(1.05);
+  }
+  
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 15px 0;
+    font-size: 0.9rem;
+    color: #ddd;
+    border-top: 2px solid rgba(255,255,255,0.2);
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .header {
+      padding: 8px 10px;
+    }
+    .auth-box {
+      padding: 1.5rem;
+    }
+    .auth-box h2 {
+      font-size: 1.8rem;
+    }
+    .button {
+      font-size: 0.9rem;
+      padding: 8px 15px;
+    }
+  }
+  
