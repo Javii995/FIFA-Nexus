@@ -4,17 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FIFA Nexus - Favoriete Clubs</title>
-    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="favorite-club-styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script defer src="script.js"></script>
 </head>
 
 <body>
  
-
-   
-    
 
 
 <header class="header">
@@ -35,12 +33,21 @@
 
 
 
-
- <main class="container">
-        <h1 class="title">⭐ JOUW FAVORIETE CLUBS ⭐</h1>
+<main class="container" style=>
+   
+    <h1 class="title">
+        <span style="display: inline-block; animation: spin 2s linear infinite">⭐</span> 
+        JOUW FAVORIETE CLUBS 
+        <span style="display: inline-block; animation: spin 2s linear infinite">⭐</span>
+    </h1>
+    
+    <style>
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    </style>
         
-      
-
 
         <div class="search-container">
             <input type="text" class="search-bar" placeholder="Zoek een nieuwe club om toe te voegen..." id="clubSearch">
@@ -159,35 +166,8 @@
 
 
 
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h4>FIFA Nexus</h4>
-                <ul>
-                    <li><a href="home.html">Home</a></li>
-                
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h4>Features</h4>
-                <ul>
-                    <li><a href="quiz.html">Club Quiz</a></li>
-                    <li><a href="favorite-club.html">Favoriete Clubs</a></li>
-                    <li><a href="favorite-league.html">Favoriete League</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h4>Volg Ons</h4>
-                <div class="social-icons">
-                    <a href="#"><i class="fab fa-facebook"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                </div>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 FIFA Nexus. Alle rechten voorbehouden.</p>
-        </div>
-    </footer>
+    <div class="copyright-footer" style="text-align: center; padding: 15px; background-color: rgba(0,0,0,0.7); margin-top: 20px;">
+        <p>&copy; 2025 FIFA Nexus </p>
+    </div>
 </body>
 </html>

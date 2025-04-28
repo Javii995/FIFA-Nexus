@@ -3,11 +3,11 @@ body, html {
     margin: 0;
     padding: 0;
     font-family: 'Oswald', sans-serif;
-    background: #1b5e20; /* Donkergroen, stadiongevoel */
+    background: donkergroen; /* Donkergroen, stadiongevoel */
     color: #fff;
   }
   
-  /* Voetbalveld-achtergrond met subtiele grasstructuur */
+  /* Voetbalveld-achtergrond met subtiele grasstructuur soort van */
   .game-container {
     display: flex;
     flex-direction: column;
