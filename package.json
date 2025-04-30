@@ -1,9 +1,14 @@
 {
   "devDependencies": {
+    "@types/express": "^5.0.1",
     "@types/node": "^22.15.3",
     "typescript": "^5.8.3"
   },
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "start": "node dist/server.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
   }
 }

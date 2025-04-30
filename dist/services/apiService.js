@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.apiService = void 0;
 const BASE_URL = 'https://api.futdatabase.com/api';
-const API_KEY = process.env.API_KEY || 'jouw_api_sleutel_hier';
+const API_KEY = process.env.API_KEY || '7404c788-760e-1b06-4ede-6798a07e9926';
 async function fetchFromApi(endpoint) {
     try {
         const response = await fetch(`${BASE_URL}${endpoint}`, {
