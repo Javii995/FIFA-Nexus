@@ -7,7 +7,7 @@ async function fetchFromApi<T>(endpoint: string): Promise<T> {
   try {
     const response = await fetch(`${BASE_URL}${endpoint}`, {
       headers: {
-        'Authorization': `Bearer ${API_KEY}`,
+        'X-AUTH-TOKEN': API_KEY, 
         'Content-Type': 'application/json'
       }
     });
