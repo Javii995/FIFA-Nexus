@@ -1,0 +1,66 @@
+<!-- views/dashboard.ejs (voorheen home.html) -->
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <header class="header">
+        <nav class="navbar">
+            <a href="/dashboard"><div class="logo">FIFA Nexus</div></a>
+            <div class="nav-links">
+                <a href="/quiz"><i class="fas fa-question-circle"></i> Quiz</a>
+                <a href="/favorite-clubs"><i class="fas fa-star"></i> Favoriete Clubs</a>
+                <a href="/blacklisted-clubs"><i class="fas fa-ban"></i> Blacklisted Clubs</a>
+                <a href="/favorite-league"><i class="fas fa-trophy"></i> Favoriete League</a>
+                <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Uitloggen</a>
+            </div>
+        </nav>
+    </header>
+    <main class="container">
+        <section class="hero">
+            <div class="hero-content">
+                <h2>Welkom <%= user ? user.username : 'FIFA Fan' %>!</h2>
+                <p>De ultieme bestemming voor FIFA fans</p>
+                <p>🌍 Test je kennis over voetbalclubs en competities uit de hele wereld.</p>
+                <p>🏆 Strijd tegen je vrienden en klimmen op de ranglijst!</p>
+                <p>⚽ Ontdek en beheer je favoriete clubs en leagues.</p>
+                <p>🔥 Verdien punten, ontgrendel achievements en verbeter je FIFA-kennis.</p>
+                <a href="/quiz" class="button hero-button">Start quiz</a>
+            </div>
+        </section>
+    </main>
+    
+    <footer class="footer">
+        <div class="footer-bottom">
+            <p>&copy; 2025 FIFA Nexus. Alle rechten voorbehouden.</p>
+        </div>
+    </footer>
+
+    <script>
+    // Uitloggen
+    document.getElementById('logoutBtn').addEventListener('click', async (e) => {
+        e.preventDefault();
+        
+        // Verwijder token uit localStorage
+        localStorage.removeItem('fifaNexusToken');
+        
+        // Verwijder token cookie via een API call
+        try {
+            await fetch('/api/auth/logout', { method: 'POST' });
+        } catch (error) {
+            console.error('Logout error:', error);
+        }
+        
+        // Redirect naar login pagina
+        window.location.href = '/login';
+    });
+    </script>
+</body>
+</html>

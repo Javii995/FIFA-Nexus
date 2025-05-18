@@ -1,0 +1,116 @@
+<!-- views/register.ejs -->
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <header class="header">
+        <nav class="navbar">
+            <a href="/"><div class="logo">FIFA Nexus</div></a>
+        </nav>
+    </header>
+    
+    <section class="auth-container">
+        <div class="auth-box">
+            <h2>Registratie</h2>
+            <p>Maak een account aan om toegang te krijgen tot FIFA Nexus.</p>
+            <form id="registerForm">
+                <div class="form-group">
+                    <input type="text" id="username" name="username" placeholder="Gebruikersnaam" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" id="email" name="email" placeholder="E-mailadres" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="password" name="password" placeholder="Wachtwoord" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Herhaal wachtwoord" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="button">Account aanmaken</button>
+                </div>
+                <div class="form-links">
+                    <p><a href="/login">Ga terug naar aanmelden</a></p>
+                </div>
+            </form>
+            <div class="message-container">
+                <!-- Hier worden foutmeldingen en succesberichten weergegeven -->
+            </div>
+        </div>
+    </section>
+    
+    <footer class="footer">
+        <p>&copy; 2025 FIFA Nexus. Alle rechten voorbehouden.</p>
+    </footer>
+    
+    <script>
+    // Vereenvoudigde versie van de registratie logica
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const username = document.getElementById('username').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        
+        const messageContainer = document.querySelector('.message-container');
+        messageContainer.innerHTML = '';
+        
+        const messageElement = document.createElement('div');
+        
+        // Wachtwoord validatie
+        if (password !== confirmPassword) {
+            messageElement.className = 'error-message';
+            messageElement.textContent = 'Wachtwoorden komen niet overeen';
+            messageContainer.appendChild(messageElement);
+            return;
+        }
+        
+        try {
+            const response = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, email, password })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                messageElement.className = 'success-message';
+                messageElement.textContent = data.message || 'Registratie succesvol!';
+                
+                // Bewaar token in localStorage
+                localStorage.setItem('fifaNexusToken', data.token);
+                
+                // Redirect naar dashboard na succesvol registreren
+                setTimeout(() => {
+                    window.location.href = '/dashboard';
+                }, 1000);
+            } else {
+                messageElement.className = 'error-message';
+                messageElement.textContent = data.message || 'Er is een fout opgetreden.';
+            }
+            
+            messageContainer.appendChild(messageElement);
+        } catch (error) {
+            console.error('Registratie error:', error);
+            
+            messageElement.className = 'error-message';
+            messageElement.textContent = 'Er is een fout opgetreden bij het registreren.';
+            
+            messageContainer.appendChild(messageElement);
+        }
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!-- views/landing.ejs -->
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <header class="header">
+        <nav class="navbar">
+            <a href="/"><div class="logo">FIFA Nexus</div></a>
+            <div class="nav-links">
+                <a href="/login">Aanmelden</a>
+                <a href="/register">Registreren</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <h1 class="title">Selecteer Je Game</h1>
+        <div class="grid">
+            <div class="card card-fifa">
+                <div class="image" style="background-image: url('/public/images/fifa\ sfeerbeeld.jpg');">
+                    <div class="overlay">
+                        <h3>FIFA</h3>
+                        <p>Voetbal quiz</p>
+                    </div>
+                </div>
+                <a href="/login" class="button">
+                    Selecteer <i class="fas fa-chevron-right"></i>
+                </a>
+            </div>
+            <div class="card card-fortnite disabled">
+                <div class="image">
+                    <div class="overlay">
+                        <h3>Fortnite</h3>
+                    </div>
+                </div>
+                <button class="button disabled">Binnenkort Beschikbaar <i class="fas fa-chevron-right"></i></button>
+            </div>
+            <div class="card card-lego disabled">
+                <div class="image">
+                    <div class="overlay">
+                        <h3>LegoMasters</h3>
+                    </div>
+                </div>
+                <button class="button disabled">Binnenkort Beschikbaar <i class="fas fa-chevron-right"></i></button>
+            </div>
+            <div class="card card-lotr disabled">
+                <div class="image">
+                    <div class="overlay">
+                        <h3>LOTR</h3>
+                    </div>
+                </div>
+                <button class="button disabled">Binnenkort Beschikbaar <i class="fas fa-chevron-right"></i></button>
+            </div>
+            <div class="card card-mtg disabled">
+                <div class="image">
+                    <div class="overlay">
+                        <h3>MTG</h3>
+                    </div>
+                </div>
+                <button class="button disabled">Binnenkort Beschikbaar <i class="fas fa-chevron-right"></i></button>
+            </div>
+            <div class="card card-pokemon disabled">
+                <div class="image">
+                    <div class="overlay">
+                        <h3>Pokemon</h3>
+                    </div>
+                </div>
+                <button class="button disabled">Binnenkort Beschikbaar <i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2025 FIFA Nexus. Alle rechten voorbehouden.</p>
+    </footer>
+    
+    <script>
+        // Script om naar inloggen te redirecten als op een inactief project wordt geklikt
+        document.querySelectorAll('.card.disabled').forEach(card => {
+            card.addEventListener('click', () => {
+                alert('Dit project is niet beschikbaar. Log in om toegang te krijgen tot het FIFA project.');
+            });
+        });
+        
+        // Controleer of gebruiker al is ingelogd
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('fifaNexusToken');
+            if (token) {
+                // Als gebruiker is ingelogd, redirect naar dashboard
+                window.location.href = '/dashboard';
+            }
+        });
+    </script>
+</body>
+</html>
