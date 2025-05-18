@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FIFA Nexus - Favoriete Clubs</title>
+    <link rel="stylesheet" href="/styles/styles.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="navbar">
+            <div class="logo">
+                <a href="/home"><div class="logo">FIFA Nexus</div></a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/home">Home</a></li>
+                <li><a href="/favorite-club">Favoriete Clubs</a></li>
+                <li><a href="/blacklisted">Blacklisted Clubs</a></li>
+                <li><a href="/favorite-league">Favoriete League</a></li>
+                <li><a href="/quiz-landing">Quiz</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main class="container">
+        <h1>❤️ Favoriete Clubs ❤️</h1>
+        <div class="grid">
+            <% favoriteClubs.forEach(club => { %>
+                <div class="card">
+                    <div class="image"><img src="<%= club.emblem %>" alt="<%= club.name %>"></div>
+                    <h3><%= club.name %></h3>
+                </div>
+            <% }) %>
+        </div>
+    </main>
+</body>
+</html>

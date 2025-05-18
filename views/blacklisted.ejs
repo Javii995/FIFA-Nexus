@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FIFA Nexus - Blacklisted Clubs</title>
+    <link rel="stylesheet" href="/styles/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script defer src="/script.js"></script>
+</head>
+
+<body>
+    <header class="header">
+        <nav class="navbar">
+            <div class="logo">
+                <a href="/home"><div class="logo">FIFA Nexus</div></a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/home"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="/favorite-club"><i class="fas fa-heart"></i> Favoriete Clubs</a></li>
+                <li><a href="/blacklisted"><i class="fas fa-ban"></i> Blacklisted Clubs</a></li>
+                <li><a href="/favorite-league"><i class="fas fa-trophy"></i> Favoriete League</a></li>
+                <li><a href="/quiz-landing"><i class="fas fa-question-circle"></i> Quiz</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main class="container">
+        <h1>🚫 Blacklisted Clubs 🚫</h1>
+        <p>Hier zie je een overzicht van de clubs die je hebt geblacklist. Je kunt ze bewerken of verwijderen.</p>
+        
+        <div class="grid">
+            <% blacklistedClubs.forEach(club => { %>
+                <div class="card">
+                    <div class="image"> <img src="<%= club.emblem %>" alt="<%= club.name %>"> </div>
+                    <h3><%= club.name %></h3>
+                    <p><strong>Reden:</strong> <span><%= club.reason %></span></p>
+                    <button class="edit-reason" data-id="<%= club.id %>">✏️ Bewerk reden</button>
+                    <button class="remove" data-id="<%= club.id %>">❌ Verwijderen uit lijst</button>
+                </div>
+            <% }) %>
+        </div>
+    </main>
+    
+    <footer class="footer">
+        <p>&copy; 2025 FIFA Nexus. Alle rechten voorbehouden.</p>
+    </footer>
+</body>
+</html>

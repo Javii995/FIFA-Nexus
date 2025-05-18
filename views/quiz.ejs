@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FIFA Nexus - Quiz</title>
+    <link rel="stylesheet" href="/styles/quiz-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script defer src="/scripts/quiz.js"></script>
+</head>
+
+<body>
+    <header class="header">
+        <nav class="navbar">
+            <a href="/home"><div class="logo">FIFA Nexus</div></a>
+        </nav>
+    </header>
+    
+    <main class="quiz-container">
+        <div class="quiz-header">
+            <h1>⚽ FIFA Quiz ⚽</h1>
+            <p>Beantwoord de vragen en test je kennis over voetbalclubs en leagues!</p>
+        </div>
+        
+        <div class="quiz-question">
+            <h2><%= question.text %></h2>
+            <div class="quiz-options">
+                <% question.options.forEach((option, index) => { %>
+                    <button class="quiz-option" data-index="<%= index %>"><%= option %></button>
+                <% }) %>
+            </div>
+        </div>
+        
+        <div class="quiz-footer">
+            <p>Score: <%= score %></p>
+            <p>Hoogste Score: <%= highScore %></p>
+        </div>
+    </main>
+    
+    <footer class="footer">
+        <p>&copy; 2025 FIFA Nexus. Alle rechten voorbehouden.</p>
+    </footer>
+</body>
+</html>
