@@ -1,0 +1,226 @@
+<!-- views/favorite-clubs.ejs -->
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <header class="header">
+        <nav class="navbar">
+            <a href="/dashboard"><div class="logo">FIFA Nexus</div></a>
+            <div class="nav-links">
+                <a href="/dashboard"><i class="fas fa-home"></i> Home</a>
+                <a href="/favorite-clubs"><i class="fas fa-star"></i> Favoriete Clubs</a>
+                <a href="/blacklisted-clubs"><i class="fas fa-ban"></i> Blacklisted Clubs</a>
+                <a href="/favorite-league"><i class="fas fa-trophy"></i> Favoriete League</a>
+                <a href="/quiz"><i class="fas fa-question-circle"></i> Quiz</a>
+                <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Uitloggen</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container" style="background-image: url('/images/achtergrond-favo-club.png'); background-blend-mode: overlay;">
+        <h1 class="title">
+            <span style="display: inline-block; animation: spin 2s linear infinite">⭐</span> 
+            JOUW FAVORIETE CLUBS 
+            <span style="display: inline-block; animation: spin 2s linear infinite">⭐</span>
+        </h1>
+        
+        <style>
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        </style>
+
+        <div class="search-container">
+            <input type="text" class="search-bar" placeholder="Zoek een nieuwe club om toe te voegen..." id="clubSearch">
+            <button class="gradient-button" id="addClubBtn">+ TOEVOEGEN</button>
+        </div>
+
+        <div class="grid" id="favoriteClubsGrid">
+            <!-- Placeholder clubs - in real implementation these would be loaded from user data -->
+            <div class="card club-card" data-club-id="1">
+                <div class="image" style="background-image: url('/images/barcelona.jpg');">
+                    <div class="overlay">
+                        <h3>FC Barcelona</h3>
+                        <p>Spanje</p>
+                    </div>
+                </div>
+                <div class="club-details">
+                    <h3>FC Barcelona</h3>
+                    <p>Druk voor meer informatie</p>
+                    <div class="stats">
+                        <span><i class="fas fa-eye"></i> Gezien: <span class="seen-count">3</span> keer</span>
+                    </div>
+                    <div class="actions">
+                        <button class="gradient-button seen-btn"><i class="fas fa-plus"></i></button>
+                        <button class="gradient-button remove-btn"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card club-card" data-club-id="2">
+                <div class="image" style="background-image: url('/images/liverpool.png');">
+                    <div class="overlay">
+                        <h3>Liverpool FC</h3>
+                        <p>Engeland</p>
+                    </div>
+                </div>
+                <div class="club-details">
+                    <h3>Liverpool FC</h3>
+                    <p>Druk voor meer informatie</p>
+                    <div class="stats">
+                        <span><i class="fas fa-eye"></i> Gezien: <span class="seen-count">1</span> keer</span>
+                    </div>
+                    <div class="actions">
+                        <button class="gradient-button seen-btn"><i class="fas fa-plus"></i></button>
+                        <button class="gradient-button remove-btn"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card club-card" data-club-id="3">
+                <div class="image" style="background-image: url('/images/bayern.png');">
+                    <div class="overlay">
+                        <h3>Bayern München</h3>
+                        <p>Duitsland</p>
+                    </div>
+                </div>
+                <div class="club-details">
+                    <h3>Bayern München</h3>
+                    <p>Druk voor meer informatie</p>
+                    <div class="stats">
+                        <span><i class="fas fa-eye"></i> Gezien: <span class="seen-count">2</span> keer</span>
+                    </div>
+                    <div class="actions">
+                        <button class="gradient-button seen-btn"><i class="fas fa-plus"></i></button>
+                        <button class="gradient-button remove-btn"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Club Details Modal -->
+        <div class="modal" id="clubDetailsModal" style="display: none;">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <div class="club-modal-header">
+                    <img src="" width="400px" alt="Club emblem" id="modalClubEmblem">
+                    <h2 id="modalClubName">Club Naam</h2>
+                </div>
+                <div class="club-info">
+                    <p><strong>Land:</strong> <span id="modalClubCountry">Land</span></p>
+                    <p><strong>Competitie:</strong> <span id="modalClubLeague">League</span></p>
+                    <p><strong>Opgericht:</strong> <span id="modalClubFounded">Jaar</span></p>
+                    <p><strong>Stadion:</strong> <span id="modalClubStadium">Stadion</span></p>
+                </div>
+                <h3>Spelers</h3>
+                <div class="players-grid" id="modalClubPlayers">
+                    <!-- Players will be loaded dynamically -->
+                </div>
+                <div class="modal-actions">
+                    <button class="gradient-button seen-btn" id="modalSeenBtn"><i class="fas fa-plus"></i> Gezien in het echt</button>
+                    <button class="gradient-button" id="modalCloseBtn">Sluiten</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="no-favorites" id="noFavoritesMessage" style="display: none;">
+            <p>Je hebt nog geen favoriete clubs toegevoegd.</p>
+            <p>Speel de <a href="/quiz">Quiz</a> of gebruik de zoekbalk hierboven om clubs toe te voegen!</p>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2025 FIFA Nexus. Alle rechten voorbehouden.</p>
+    </footer>
+
+    <script>
+    // Uitloggen
+    document.getElementById('logoutBtn').addEventListener('click', async (e) => {
+        e.preventDefault();
+        localStorage.removeItem('fifaNexusToken');
+        try {
+            await fetch('/api/auth/logout', { method: 'POST' });
+        } catch (error) {
+            console.error('Logout error:', error);
+        }
+        window.location.href = '/login';
+    });
+
+    // Club card click handlers
+    document.querySelectorAll('.club-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+            if (!e.target.closest('.actions')) {
+                const clubId = card.dataset.clubId;
+                showClubDetails(clubId);
+            }
+        });
+    });
+
+    // Seen button handlers
+    document.querySelectorAll('.seen-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const card = e.target.closest('.club-card');
+            const seenCountElement = card.querySelector('.seen-count');
+            let count = parseInt(seenCountElement.textContent);
+            seenCountElement.textContent = count + 1;
+            
+            // Here you would update the count in the database
+            console.log('Updating seen count for club');
+        });
+    });
+
+    // Remove button handlers
+    document.querySelectorAll('.remove-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (confirm('Weet je zeker dat je deze club wilt verwijderen uit je favorieten?')) {
+                const card = e.target.closest('.club-card');
+                card.remove();
+                
+                // Here you would remove from database
+                console.log('Removing club from favorites');
+            }
+        });
+    });
+
+    // Add club functionality
+    document.getElementById('addClubBtn').addEventListener('click', () => {
+        const searchTerm = document.getElementById('clubSearch').value;
+        if (searchTerm.trim()) {
+            // Here you would search for clubs using the FUT Database API
+            console.log('Searching for club:', searchTerm);
+        }
+    });
+
+    // Modal functionality
+    function showClubDetails(clubId) {
+        // Here you would fetch club details from your API
+        document.getElementById('clubDetailsModal').style.display = 'block';
+    }
+
+    document.querySelector('.close-modal').addEventListener('click', () => {
+        document.getElementById('clubDetailsModal').style.display = 'none';
+    });
+
+    document.getElementById('modalCloseBtn').addEventListener('click', () => {
+        document.getElementById('clubDetailsModal').style.display = 'none';
+    });
+
+    // Load user's favorite clubs on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        // This would normally fetch from your API
+        console.log('Loading user favorite clubs...');
+    });
+    </script>
+</body>
+</html>

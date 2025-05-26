@@ -1,0 +1,232 @@
+<!-- views/quiz.ejs -->
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <header class="header">
+        <nav class="navbar">
+            <a href="/dashboard"><div class="logo">FIFA Nexus</div></a>
+            <div class="nav-links">
+                <a href="/dashboard"><i class="fas fa-home"></i> Home</a>
+                <a href="/favorite-clubs"><i class="fas fa-star"></i> Favoriete Clubs</a>
+                <a href="/blacklisted-clubs"><i class="fas fa-ban"></i> Blacklisted Clubs</a>
+                <a href="/favorite-league"><i class="fas fa-trophy"></i> Favoriete League</a>
+                <a href="/quiz"><i class="fas fa-question-circle"></i> Quiz</a>
+                <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Uitloggen</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="quiz-intro">
+            <h1>⚽ Welkom bij de FIFA Nexus Club Quiz! 🎮</h1>
+            <div class="quiz-intro-content">
+                <h2>🔥 Test je kennis en word de ultieme voetbalexpert! 🔥</h2>
+                <p>Denk jij alle voetbalclubs en leagues te herkennen? Toon je skills, scoor punten en strijd voor de hoogste plek op het klassement! 🏆</p>
+                <p>🏅 **Jouw missie:** Selecteer de juiste emblemen, verzamel favorieten en vermijd je minst geliefde clubs!</p>
+                <p>👍 **Favoriet:** Klik op een club om deze aan je favorieten toe te voegen en bouw je droomteam!</p>
+                <p>👎 **Blacklist:** Markeer clubs die je liever niet ziet en ze verdwijnen uit je quiz!</p>
+            </div>
+            
+            <div class="quiz-actions">
+                <button id="startQuizBtn" class="button">🎮 Start de uitdaging!</button>
+            </div>
+        </section>
+
+        <!-- Quiz Game Section (hidden initially) -->
+        <section class="quiz-game" id="quizGame" style="display: none;">
+            <div class="quiz-header">
+                <div class="score-display">
+                    <span>Score: <span id="currentScore">0</span></span>
+                    <span>High Score: <span id="highScore">0</span></span>
+                </div>
+            </div>
+
+            <div class="quiz-content">
+                <div class="quiz-question">
+                    <p id="questionText">Welke club/league hoort bij dit embleem?</p>
+                </div>
+
+                <div class="quiz-image">
+                    <img id="quizEmblem" src="" alt="Club/League Embleem">
+                    <div class="quiz-actions-buttons">
+                        <button id="favoriteBtn" class="action-btn favorite-btn" title="Toevoegen aan favorieten">
+                            <i class="fas fa-thumbs-up"></i>
+                        </button>
+                        <button id="blacklistBtn" class="action-btn blacklist-btn" title="Blacklisten">
+                            <i class="fas fa-thumbs-down"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="quiz-options" id="quizOptions">
+                    <!-- Options will be dynamically generated -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Game Over Section -->
+        <section class="game-over" id="gameOverSection" style="display: none;">
+            <h2>🎮 Quiz Voltooid! 🎮</h2>
+            <div class="final-score">
+                <p>Jouw score: <span id="finalScore">0</span></p>
+                <p>Hoogste score: <span id="finalHighScore">0</span></p>
+            </div>
+            
+            <div id="newHighScoreSection" style="display: none;">
+                <h3>🎉 Nieuwe hoogste score! 🎉</h3>
+                <div class="name-input">
+                    <input type="text" id="playerName" placeholder="Voer je naam in" maxlength="20">
+                    <button id="saveScoreBtn" class="button">Score Opslaan</button>
+                </div>
+            </div>
+
+            <div class="game-over-actions">
+                <button id="playAgainBtn" class="button">Nog een keer spelen</button>
+                <a href="/dashboard" class="button">Terug naar Home</a>
+            </div>
+        </section>
+
+        <!-- Blacklist Reason Modal -->
+        <div class="modal" id="blacklistModal" style="display: none;">
+            <div class="modal-content">
+                <h3>Waarom wil je deze club blacklisten?</h3>
+                <textarea id="blacklistReason" placeholder="Voer je reden in..." maxlength="200"></textarea>
+                <div class="modal-actions">
+                    <button id="confirmBlacklistBtn" class="button">Bevestigen</button>
+                    <button id="cancelBlacklistBtn" class="button">Annuleren</button>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer class="footer">
+        <p>&copy; 2025 FIFA Nexus. Alle rechten voorbehouden.</p>
+    </footer>
+
+    <script>
+    // Quiz JavaScript logica
+    let currentScore = 0;
+    let highScore = 0;
+    let currentQuestion = null;
+    let gameActive = false;
+
+    // Uitloggen
+    document.getElementById('logoutBtn').addEventListener('click', async (e) => {
+        e.preventDefault();
+        localStorage.removeItem('fifaNexusToken');
+        try {
+            await fetch('/api/auth/logout', { method: 'POST' });
+        } catch (error) {
+            console.error('Logout error:', error);
+        }
+        window.location.href = '/login';
+    });
+
+    // Start quiz
+    document.getElementById('startQuizBtn').addEventListener('click', () => {
+        startQuiz();
+    });
+
+    // Play again
+    document.getElementById('playAgainBtn').addEventListener('click', () => {
+        startQuiz();
+    });
+
+    function startQuiz() {
+        currentScore = 0;
+        gameActive = true;
+        
+        // Hide intro and game over, show quiz
+        document.querySelector('.quiz-intro').style.display = 'none';
+        document.getElementById('gameOverSection').style.display = 'none';
+        document.getElementById('quizGame').style.display = 'block';
+        
+        // Load first question
+        loadNextQuestion();
+    }
+
+    function loadNextQuestion() {
+        // This would normally fetch from your API
+        // For now, we'll use placeholder logic
+        updateScoreDisplay();
+        
+        // Placeholder for loading questions from FUT Database API
+        console.log('Loading next question...');
+    }
+
+    function updateScoreDisplay() {
+        document.getElementById('currentScore').textContent = currentScore;
+        document.getElementById('highScore').textContent = highScore;
+    }
+
+    function endGame() {
+        gameActive = false;
+        
+        // Hide quiz, show game over
+        document.getElementById('quizGame').style.display = 'none';
+        document.getElementById('gameOverSection').style.display = 'block';
+        
+        // Update final scores
+        document.getElementById('finalScore').textContent = currentScore;
+        document.getElementById('finalHighScore').textContent = highScore;
+        
+        // Check if new high score
+        if (currentScore > highScore) {
+            document.getElementById('newHighScoreSection').style.display = 'block';
+            highScore = currentScore;
+        }
+    }
+
+    // Blacklist functionality
+    document.getElementById('blacklistBtn').addEventListener('click', () => {
+        document.getElementById('blacklistModal').style.display = 'block';
+    });
+
+    document.getElementById('cancelBlacklistBtn').addEventListener('click', () => {
+        document.getElementById('blacklistModal').style.display = 'none';
+    });
+
+    document.getElementById('confirmBlacklistBtn').addEventListener('click', () => {
+        const reason = document.getElementById('blacklistReason').value;
+        if (reason.trim()) {
+            // Here you would send the blacklist data to your API
+            console.log('Blacklisting with reason:', reason);
+            document.getElementById('blacklistModal').style.display = 'none';
+            document.getElementById('blacklistReason').value = '';
+        }
+    });
+
+    // Favorite functionality
+    document.getElementById('favoriteBtn').addEventListener('click', () => {
+        // Here you would send the favorite data to your API
+        console.log('Adding to favorites');
+    });
+
+    // Save score functionality
+    document.getElementById('saveScoreBtn').addEventListener('click', async () => {
+        const playerName = document.getElementById('playerName').value;
+        if (playerName.trim()) {
+            // Here you would save the score to your API
+            console.log('Saving score:', currentScore, 'for player:', playerName);
+            document.getElementById('newHighScoreSection').style.display = 'none';
+        }
+    });
+
+    // Load user's high score on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        // This would normally fetch from your API
+        highScore = 0; // Placeholder
+        updateScoreDisplay();
+    });
+    </script>
+</body>
+</html>

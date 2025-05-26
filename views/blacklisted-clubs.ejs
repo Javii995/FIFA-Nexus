@@ -1,0 +1,198 @@
+<!-- views/blacklisted-clubs.ejs -->
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <header class="header">
+        <nav class="navbar">
+            <a href="/dashboard"><div class="logo">FIFA Nexus</div></a>
+            <div class="nav-links">
+                <a href="/dashboard"><i class="fas fa-home"></i> Home</a>
+                <a href="/favorite-clubs"><i class="fas fa-star"></i> Favoriete Clubs</a>
+                <a href="/blacklisted-clubs"><i class="fas fa-ban"></i> Blacklisted Clubs</a>
+                <a href="/favorite-league"><i class="fas fa-trophy"></i> Favoriete League</a>
+                <a href="/quiz"><i class="fas fa-question-circle"></i> Quiz</a>
+                <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Uitloggen</a>
+            </div>
+        </nav>
+    </header>
+    
+    <main class="container">
+        <h1>🚫 Blacklisted Clubs 🚫</h1>
+        <p>Hier zie je een overzicht van de clubs die je hebt geblacklist. Je kunt ze bewerken of verwijderen.</p>
+        
+        <div class="grid" id="blacklistedClubsGrid">
+            <!-- Placeholder blacklisted clubs - in real implementation these would be loaded from user data -->
+            <div class="card blacklisted-card" data-club-id="1">
+                <div class="image">
+                    <img src="/images/club1.png" alt="Club 1">
+                </div>
+                <div class="club-details">
+                    <h3>Real Madrid</h3>
+                    <p><strong>Reden:</strong> <span class="reason-text">Rivaliteit met Barcelona</span></p>
+                    <div class="actions">
+                        <button class="edit-reason-btn gradient-button">✏️ Bewerk reden</button>
+                        <button class="remove-blacklist-btn gradient-button">❌ Verwijderen uit lijst</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card blacklisted-card" data-club-id="2">
+                <div class="image">
+                    <img src="/images/club2.png" alt="Club 2">
+                </div>
+                <div class="club-details">
+                    <h3>Manchester City</h3>
+                    <p><strong>Reden:</strong> <span class="reason-text">Persoonlijke voorkeur</span></p>
+                    <div class="actions">
+                        <button class="edit-reason-btn gradient-button">✏️ Bewerk reden</button>
+                        <button class="remove-blacklist-btn gradient-button">❌ Verwijderen uit lijst</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card blacklisted-card" data-club-id="3">
+                <div class="image">
+                    <img src="/images/club3.png" alt="Club 3">
+                </div>
+                <div class="club-details">
+                    <h3>Paris Saint-Germain</h3>
+                    <p><strong>Reden:</strong> <span class="reason-text">Slechte ervaringen</span></p>
+                    <div class="actions">
+                        <button class="edit-reason-btn gradient-button">✏️ Bewerk reden</button>
+                        <button class="remove-blacklist-btn gradient-button">❌ Verwijderen uit lijst</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Reason Modal -->
+        <div class="modal" id="editReasonModal" style="display: none;">
+            <div class="modal-content">
+                <h3>Reden voor blacklist bewerken</h3>
+                <textarea id="editReasonText" placeholder="Voer je nieuwe reden in..." maxlength="200"></textarea>
+                <div class="modal-actions">
+                    <button id="saveReasonBtn" class="gradient-button">Opslaan</button>
+                    <button id="cancelEditBtn" class="gradient-button">Annuleren</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="no-blacklisted" id="noBlacklistedMessage" style="display: none;">
+            <p>Je hebt nog geen clubs geblacklist.</p>
+            <p>Speel de <a href="/quiz">Quiz</a> om clubs te blacklisten!</p>
+        </div>
+    </main>
+    
+    <footer class="footer">
+        <p>&copy; 2025 FIFA Nexus. Alle rechten voorbehouden.</p>
+    </footer>
+
+    <script>
+    let currentEditingCard = null;
+
+    // Uitloggen
+    document.getElementById('logoutBtn').addEventListener('click', async (e) => {
+        e.preventDefault();
+        localStorage.removeItem('fifaNexusToken');
+        try {
+            await fetch('/api/auth/logout', { method: 'POST' });
+        } catch (error) {
+            console.error('Logout error:', error);
+        }
+        window.location.href = '/login';
+    });
+
+    // Edit reason button handlers
+    document.querySelectorAll('.edit-reason-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            currentEditingCard = e.target.closest('.blacklisted-card');
+            const currentReason = currentEditingCard.querySelector('.reason-text').textContent;
+            
+            document.getElementById('editReasonText').value = currentReason;
+            document.getElementById('editReasonModal').style.display = 'block';
+        });
+    });
+
+    // Remove blacklist button handlers
+    document.querySelectorAll('.remove-blacklist-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const clubName = e.target.closest('.blacklisted-card').querySelector('h3').textContent;
+            
+            if (confirm(`Weet je zeker dat je ${clubName} wilt verwijderen uit de blacklist?`)) {
+                const card = e.target.closest('.blacklisted-card');
+                const clubId = card.dataset.clubId;
+                
+                // Here you would remove from database
+                console.log('Removing club from blacklist:', clubId);
+                
+                card.remove();
+                
+                // Check if there are no more blacklisted clubs
+                if (document.querySelectorAll('.blacklisted-card').length === 0) {
+                    document.getElementById('noBlacklistedMessage').style.display = 'block';
+                }
+            }
+        });
+    });
+
+    // Save reason button
+    document.getElementById('saveReasonBtn').addEventListener('click', () => {
+        const newReason = document.getElementById('editReasonText').value.trim();
+        
+        if (newReason && currentEditingCard) {
+            const clubId = currentEditingCard.dataset.clubId;
+            
+            // Update the reason text in the UI
+            currentEditingCard.querySelector('.reason-text').textContent = newReason;
+            
+            // Here you would update the reason in the database
+            console.log('Updating blacklist reason for club:', clubId, 'New reason:', newReason);
+            
+            // Close modal
+            document.getElementById('editReasonModal').style.display = 'none';
+            currentEditingCard = null;
+        } else {
+            alert('Voer een geldige reden in.');
+        }
+    });
+
+    // Cancel edit button
+    document.getElementById('cancelEditBtn').addEventListener('click', () => {
+        document.getElementById('editReasonModal').style.display = 'none';
+        currentEditingCard = null;
+    });
+
+    // Close modal when clicking outside
+    window.addEventListener('click', (e) => {
+        const modal = document.getElementById('editReasonModal');
+        if (e.target === modal) {
+            modal.style.display = 'none';
+            currentEditingCard = null;
+        }
+    });
+
+    // Load user's blacklisted clubs on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        // This would normally fetch from your API
+        console.log('Loading user blacklisted clubs...');
+        
+        // Show/hide no blacklisted message based on content
+        const blacklistedCards = document.querySelectorAll('.blacklisted-card');
+        if (blacklistedCards.length === 0) {
+            document.getElementById('noBlacklistedMessage').style.display = 'block';
+        }
+    });
+    </script>
+</body>
+</html>

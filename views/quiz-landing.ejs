@@ -1,0 +1,161 @@
+<!-- views/quiz-landing.ejs -->
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <header class="header">
+        <nav class="navbar">
+            <a href="/dashboard"><div class="logo">FIFA Nexus</div></a>
+            <div class="nav-links">
+                <a href="/dashboard"><i class="fas fa-home"></i> Home</a>
+                <a href="/favorite-clubs"><i class="fas fa-star"></i> Favoriete Clubs</a>
+                <a href="/blacklisted-clubs"><i class="fas fa-ban"></i> Blacklisted Clubs</a>
+                <a href="/favorite-league"><i class="fas fa-trophy"></i> Favoriete League</a>
+                <a href="/quiz"><i class="fas fa-question-circle"></i> Quiz</a>
+                <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Uitloggen</a>
+            </div>
+        </nav>
+    </header>
+    
+    <main class="container">
+        <h1>⚽ Welkom bij de FIFA Nexus Club Quiz! 🎮</h1>
+        <div class="quiz-intro">
+            <h2>🔥 Test je kennis en word de ultieme voetbalexpert! 🔥</h2>
+            <p>Denk jij alle voetbalclubs en leagues te herkennen? Toon je skills, scoor punten en strijd voor de hoogste plek op het klassement! 🏆</p>
+            <p>🏅 **Jouw missie:** Selecteer de juiste emblemen, verzamel favorieten en vermijd je minst geliefde clubs!</p>
+            <p>👍 **Favoriet:** Klik op een club om deze aan je favorieten toe te voegen en bouw je droomteam!</p>
+            <p>👎 **Blacklist:** Markeer clubs die je liever niet ziet en ze verdwijnen uit je quiz!</p>
+        </div>
+        
+        <div class="quiz-actions">
+            <a href="/quiz" class="button">🎮 Start de uitdaging!</a>
+        </div>
+
+        <!-- Quiz Statistics Section -->
+        <div class="quiz-stats" id="quizStats">
+            <h3>📊 Jouw Statistieken</h3>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h4>Hoogste Score</h4>
+                    <p class="stat-number" id="highScore">0</p>
+                </div>
+                <div class="stat-card">
+                    <h4>Favoriete Clubs</h4>
+                    <p class="stat-number" id="favoriteCount">0</p>
+                </div>
+                <div class="stat-card">
+                    <h4>Blacklisted Clubs</h4>
+                    <p class="stat-number" id="blacklistCount">0</p>
+                </div>
+                <div class="stat-card">
+                    <h4>Quiz Gespeeld</h4>
+                    <p class="stat-number" id="gamesPlayed">0</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Leaderboard Section -->
+        <div class="leaderboard-section" id="leaderboardSection">
+            <h3>🏆 Top Scores</h3>
+            <div class="leaderboard" id="leaderboard">
+                <!-- Placeholder leaderboard entries -->
+                <div class="leaderboard-entry">
+                    <span class="rank">1.</span>
+                    <span class="player-name">Voetbalfan123</span>
+                    <span class="score">127</span>
+                </div>
+                <div class="leaderboard-entry">
+                    <span class="rank">2.</span>
+                    <span class="player-name">ClubExpert</span>
+                    <span class="score">115</span>
+                </div>
+                <div class="leaderboard-entry">
+                    <span class="rank">3.</span>
+                    <span class="player-name">QuizMaster</span>
+                    <span class="score">98</span>
+                </div>
+                <div class="leaderboard-entry">
+                    <span class="rank">4.</span>
+                    <span class="player-name">FootballFan</span>
+                    <span class="score">87</span>
+                </div>
+                <div class="leaderboard-entry">
+                    <span class="rank">5.</span>
+                    <span class="player-name">SoccerPro</span>
+                    <span class="score">76</span>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer class="footer">
+        <p>&copy; 2025 FIFA Nexus. Alle rechten voorbehouden.</p>
+    </footer>
+
+    <script>
+    // Uitloggen
+    document.getElementById('logoutBtn').addEventListener('click', async (e) => {
+        e.preventDefault();
+        localStorage.removeItem('fifaNexusToken');
+        try {
+            await fetch('/api/auth/logout', { method: 'POST' });
+        } catch (error) {
+            console.error('Logout error:', error);
+        }
+        window.location.href = '/login';
+    });
+
+    // Load user statistics and leaderboard
+    document.addEventListener('DOMContentLoaded', async () => {
+        try {
+            // Load user statistics
+            await loadUserStats();
+            
+            // Load leaderboard
+            await loadLeaderboard();
+        } catch (error) {
+            console.error('Error loading quiz data:', error);
+        }
+    });
+
+    async function loadUserStats() {
+        try {
+            // This would normally fetch from your API
+            // For now using placeholder data
+            const stats = {
+                highScore: 0,
+                favoriteCount: 0,
+                blacklistCount: 0,
+                gamesPlayed: 0
+            };
+
+            document.getElementById('highScore').textContent = stats.highScore;
+            document.getElementById('favoriteCount').textContent = stats.favoriteCount;
+            document.getElementById('blacklistCount').textContent = stats.blacklistCount;
+            document.getElementById('gamesPlayed').textContent = stats.gamesPlayed;
+
+            console.log('User stats loaded');
+        } catch (error) {
+            console.error('Error loading user stats:', error);
+        }
+    }
+
+    async function loadLeaderboard() {
+        try {
+            // This would normally fetch from your API
+            console.log('Leaderboard loaded');
+        } catch (error) {
+            console.error('Error loading leaderboard:', error);
+        }
+    }
+    </script>
+</body>
+</html>

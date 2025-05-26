@@ -1,0 +1,181 @@
+<!-- views/favorite-league.ejs -->
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <header class="header">
+        <nav class="navbar">
+            <a href="/dashboard"><div class="logo">FIFA Nexus</div></a>
+            <div class="nav-links">
+                <a href="/dashboard"><i class="fas fa-home"></i> Home</a>
+                <a href="/favorite-clubs"><i class="fas fa-star"></i> Favoriete Clubs</a>
+                <a href="/blacklisted-clubs"><i class="fas fa-ban"></i> Blacklisted Clubs</a>
+                <a href="/favorite-league"><i class="fas fa-trophy"></i> Favoriete League</a>
+                <a href="/quiz"><i class="fas fa-question-circle"></i> Quiz</a>
+                <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Uitloggen</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container" style="background-image: url('/images/achtergrond-favo-club.png'); background-blend-mode: overlay;">
+        <h1 class="title" id="favorite-league-title">
+            <span style="display: inline-block; animation: pulsate 1s infinite alternate">🏆</span> 
+            JOUW FAVORIETE LEAGUE 
+            <span style="display: inline-block; animation: pulsate 1s infinite alternate">🏆</span>
+        </h1>
+        
+        <style>
+            @keyframes pulsate {
+                0% { transform: scale(1); }
+                100% { transform: scale(1.5); }
+            }
+        </style>
+
+        <!-- League Container (shown when user has a favorite league) -->
+        <div class="league-container" id="leagueContainer">
+            <img src="/images/league-laliga.png" width="200px" alt="La Liga" class="league-logo" id="leagueLogo">
+            <h2 class="league-title" id="leagueTitle">La Liga</h2>
+            <p class="league-info" id="leagueInfo"><strong>Info:</strong> Dit is jouw favoriete league! Bekijk hieronder de deelnemende clubs.</p>
+            <button class="remove-button" id="removeLeagueBtn">
+                <span class="icon">❌</span>
+                Verwijder uit favorieten
+            </button>
+        </div>
+
+        <!-- Clubs Section (shown when user has a favorite league) -->
+        <div class="clubs-section" id="clubsSection">
+            <h2 class="section-title">Clubs in deze league:</h2>
+            
+            <div class="grid" id="clubsGrid">
+                <!-- Placeholder clubs - in real implementation these would be loaded from API -->
+                <div class="card club-card" data-club-id="1">
+                    <div class="image" style="background-image: url('/images/barcelona.jpg');">
+                        <div class="overlay">
+                            <h3>FC Barcelona</h3>
+                            <p>Spanje</p>
+                        </div>
+                    </div>
+                    <h3>FC Barcelona</h3>
+                    <p>Land: Spanje</p>
+                    <button class="add-favorite">⭐ Toevoegen aan favorieten</button>
+                </div>
+                
+                <div class="card club-card" data-club-id="2">
+                    <div class="image" style="background-image: url('/images/realmadrid.png');">
+                        <div class="overlay">
+                            <h3>Real Madrid</h3>
+                            <p>Spanje</p>
+                        </div>
+                    </div>
+                    <h3>Real Madrid</h3>
+                    <p>Land: Spanje</p>
+                    <button class="add-favorite">⭐ Toevoegen aan favorieten</button>
+                </div>
+                
+                <div class="card club-card" data-club-id="3">
+                    <div class="image" style="background-image: url('/images/atletico.png');">
+                        <div class="overlay">
+                            <h3>Atlético Madrid</h3>
+                            <p>Spanje</p>
+                        </div>
+                    </div>
+                    <h3>Atlético Madrid</h3>
+                    <p>Land: Spanje</p>
+                    <button class="add-favorite">⭐ Toevoegen aan favorieten</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- No League Message (shown when user has no favorite league) -->
+        <div class="no-league-message" id="noLeagueMessage" style="display: none;">
+            <h2>Je hebt nog geen favoriete league</h2>
+            <p>Speel de <a href="/quiz">Quiz</a> om een league toe te voegen als favoriet!</p>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2025 FIFA Nexus. Alle rechten voorbehouden.</p>
+    </footer>
+
+    <script>
+    // Uitloggen
+    document.getElementById('logoutBtn').addEventListener('click', async (e) => {
+        e.preventDefault();
+        localStorage.removeItem('fifaNexusToken');
+        try {
+            await fetch('/api/auth/logout', { method: 'POST' });
+        } catch (error) {
+            console.error('Logout error:', error);
+        }
+        window.location.href = '/login';
+    });
+
+    // Remove league from favorites
+    document.getElementById('removeLeagueBtn').addEventListener('click', () => {
+        if (confirm('Weet je zeker dat je deze league wilt verwijderen uit je favorieten?')) {
+            // Here you would remove from database
+            console.log('Removing league from favorites');
+            
+            // Hide league container and clubs section
+            document.getElementById('leagueContainer').style.display = 'none';
+            document.getElementById('clubsSection').style.display = 'none';
+            
+            // Show no league message
+            document.getElementById('noLeagueMessage').style.display = 'block';
+        }
+    });
+
+    // Add club to favorites
+    document.querySelectorAll('.add-favorite').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const card = e.target.closest('.club-card');
+            const clubName = card.querySelector('h3').textContent;
+            const clubId = card.dataset.clubId;
+            
+            // Here you would add to database
+            console.log('Adding club to favorites:', clubId, clubName);
+            
+            // Visual feedback
+            btn.textContent = '✅ Toegevoegd!';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                btn.textContent = '⭐ Toevoegen aan favorieten';
+                btn.disabled = false;
+            }, 2000);
+        });
+    });
+
+    // Load user's favorite league on page load
+    document.addEventListener('DOMContentLoaded', async () => {
+        try {
+            // This would normally fetch from your API
+            const userHasFavoriteLeague = true; // Placeholder logic
+            
+            if (!userHasFavoriteLeague) {
+                document.getElementById('leagueContainer').style.display = 'none';
+                document.getElementById('clubsSection').style.display = 'none';
+                document.getElementById('noLeagueMessage').style.display = 'block';
+            } else {
+                // Load league data and clubs
+                console.log('Loading user favorite league and clubs...');
+            }
+        } catch (error) {
+            console.error('Error loading favorite league:', error);
+            // Show no league message on error
+            document.getElementById('leagueContainer').style.display = 'none';
+            document.getElementById('clubsSection').style.display = 'none';
+            document.getElementById('noLeagueMessage').style.display = 'block';
+        }
+    });
+    </script>
+</body>
+</html>
