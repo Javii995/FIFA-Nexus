@@ -1,14 +1,29 @@
 {
     "name": "fifa-nexus",
     "version": "1.0.0",
-    "description": "FIFA Nexus - WPL Project",
+    "description": "FIFA Nexus - WPL Project - Quiz applicatie voor voetbalclubs en leagues",
     "main": "dist/server.js",
     "scripts": {
         "start": "node dist/server.js",
         "dev": "nodemon --exec ts-node src/server.ts",
         "build": "tsc",
-        "watch": "tsc -w"
+        "watch": "tsc -w",
+        "clean": "rm -rf dist",
+        "build:clean": "npm run clean && npm run build",
+        "test": "echo \"No tests specified\" && exit 0"
     },
+    "keywords": [
+        "fifa",
+        "voetbal",
+        "quiz",
+        "clubs",
+        "leagues",
+        "nodejs",
+        "typescript",
+        "mongodb"
+    ],
+    "author": "FIFA Nexus Team",
+    "license": "MIT",
     "dependencies": {
         "bcrypt": "^5.1.1",
         "cookie-parser": "^1.4.7",
@@ -19,6 +34,7 @@
         "express-session": "^1.17.3",
         "jsonwebtoken": "^9.0.2",
         "mongoose": "^8.0.3",
+        "node-fetch": "^2.7.0",
         "nodemailer": "^6.9.7"
     },
     "devDependencies": {
@@ -29,9 +45,22 @@
         "@types/express-session": "^1.17.10",
         "@types/jsonwebtoken": "^9.0.5",
         "@types/node": "^20.10.4",
+        "@types/node-fetch": "^2.6.9",
         "@types/nodemailer": "^6.4.14",
         "nodemon": "^3.0.2",
         "ts-node": "^10.9.1",
         "typescript": "^5.3.3"
-    }
+    },
+    "engines": {
+        "node": ">=18.0.0",
+        "npm": ">=8.0.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/jouw-gebruikersnaam/fifa-nexus.git"
+    },
+    "bugs": {
+        "url": "https://github.com/jouw-gebruikersnaam/fifa-nexus/issues"
+    },
+    "homepage": "https://github.com/jouw-gebruikersnaam/fifa-nexus#readme"
 }

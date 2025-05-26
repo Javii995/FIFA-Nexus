@@ -1,3 +1,4 @@
+// src/server.ts
 import express from 'express';
 import path from 'path';
 import mongoose from 'mongoose';
@@ -7,8 +8,14 @@ import session from 'express-session';
 import cookieParser from 'cookie-parser';
 
 // Routes importeren
-import authRoutes from './routes/authRoutes';  // Zorg ervoor dat deze paden correct zijn
-import pageRoutes from './routes/pageRoutes';  // Zorg ervoor dat deze paden correct zijn
+import authRoutes from './routes/authRoutes';
+import pageRoutes from './routes/pageRoutes';
+import quizRoutes from './routes/quizRoutes';
+import clubRoutes from './routes/clubRoutes';
+import blacklistRoutes from './routes/blacklistRoutes';
+import leagueRoutes from './routes/leagueRoutes';
+import imageRoutes from './routes/imageRoutes';
+
 
 // Onbehandelde fouten afvangen
 process.on('uncaughtException', (error) => {
@@ -53,9 +60,14 @@ app.get('/test', (req, res) => {
     res.send('FIFA Nexus Server is actief!');
 });
 
-// Routes
-app.use('/api/auth', authRoutes);
-app.use('/', pageRoutes);
+// Routes registreren
+app.use('/api/auth', authRoutes);           // Authenticatie routes
+app.use('/api/quiz', quizRoutes);          // Quiz functionaliteit
+app.use('/api/clubs', clubRoutes);         // Club beheer (favorieten)
+app.use('/api/blacklist', blacklistRoutes); // Blacklist beheer
+app.use('/api/leagues', leagueRoutes);     // League beheer
+app.use('/api/images', imageRoutes);
+app.use('/', pageRoutes); // Deze moet laatste blijven
 
 // Connectie met MongoDB en server starten
 console.log('Verbinding maken met MongoDB Atlas...');
@@ -65,6 +77,16 @@ mongoose.connect(MONGODB_URI)
         // Start de server nadat de database verbinding is gemaakt
         app.listen(PORT, () => {
             console.log(`Server draait op http://localhost:${PORT}`);
+            console.log('');
+            console.log('📊 Beschikbare API endpoints:');
+            console.log('🔐 Auth: /api/auth/login, /api/auth/register');
+            console.log('🎮 Quiz: /api/quiz/start, /api/quiz/answer');
+            console.log('⭐ Clubs: /api/clubs/favorites, /api/clubs/search');
+            console.log('🚫 Blacklist: /api/blacklist/');
+            console.log('🏆 Leagues: /api/leagues/favorite');
+            console.log('');
+            console.log('🌐 Pagina\'s: /login, /register, /dashboard, /quiz');
+            console.log('');
         });
     })
     .catch((error) => {
@@ -77,3 +99,4 @@ app.use((err: Error, req: express.Request, res: express.Response, next: express.
     console.error(err.stack);
     res.status(500).send('Er is iets misgegaan!');
 });
+

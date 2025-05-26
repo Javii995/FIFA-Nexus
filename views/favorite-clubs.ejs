@@ -44,75 +44,24 @@
             <button class="gradient-button" id="addClubBtn">+ TOEVOEGEN</button>
         </div>
 
+        <!-- Search Results (verborgen initieel) -->
+        <div id="searchResults" style="display: none; margin: 1rem 0;">
+            <h3>Zoekresultaten:</h3>
+            <div class="grid" id="searchResultsGrid">
+                <!-- Search results worden hier getoond -->
+            </div>
+        </div>
+
         <div class="grid" id="favoriteClubsGrid">
-            <!-- Placeholder clubs - in real implementation these would be loaded from user data -->
-            <div class="card club-card" data-club-id="1">
-                <div class="image" style="background-image: url('/images/barcelona.jpg');">
-                    <div class="overlay">
-                        <h3>FC Barcelona</h3>
-                        <p>Spanje</p>
-                    </div>
-                </div>
-                <div class="club-details">
-                    <h3>FC Barcelona</h3>
-                    <p>Druk voor meer informatie</p>
-                    <div class="stats">
-                        <span><i class="fas fa-eye"></i> Gezien: <span class="seen-count">3</span> keer</span>
-                    </div>
-                    <div class="actions">
-                        <button class="gradient-button seen-btn"><i class="fas fa-plus"></i></button>
-                        <button class="gradient-button remove-btn"><i class="fas fa-trash"></i></button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card club-card" data-club-id="2">
-                <div class="image" style="background-image: url('/images/liverpool.png');">
-                    <div class="overlay">
-                        <h3>Liverpool FC</h3>
-                        <p>Engeland</p>
-                    </div>
-                </div>
-                <div class="club-details">
-                    <h3>Liverpool FC</h3>
-                    <p>Druk voor meer informatie</p>
-                    <div class="stats">
-                        <span><i class="fas fa-eye"></i> Gezien: <span class="seen-count">1</span> keer</span>
-                    </div>
-                    <div class="actions">
-                        <button class="gradient-button seen-btn"><i class="fas fa-plus"></i></button>
-                        <button class="gradient-button remove-btn"><i class="fas fa-trash"></i></button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card club-card" data-club-id="3">
-                <div class="image" style="background-image: url('/images/bayern.png');">
-                    <div class="overlay">
-                        <h3>Bayern München</h3>
-                        <p>Duitsland</p>
-                    </div>
-                </div>
-                <div class="club-details">
-                    <h3>Bayern München</h3>
-                    <p>Druk voor meer informatie</p>
-                    <div class="stats">
-                        <span><i class="fas fa-eye"></i> Gezien: <span class="seen-count">2</span> keer</span>
-                    </div>
-                    <div class="actions">
-                        <button class="gradient-button seen-btn"><i class="fas fa-plus"></i></button>
-                        <button class="gradient-button remove-btn"><i class="fas fa-trash"></i></button>
-                    </div>
-                </div>
-            </div>
+            <!-- Favoriete clubs worden hier geladen -->
         </div>
 
         <!-- Club Details Modal -->
         <div class="modal" id="clubDetailsModal" style="display: none;">
             <div class="modal-content">
-                <span class="close-modal">&times;</span>
+                <span class="close-modal" id="closeClubModal">&times;</span>
                 <div class="club-modal-header">
-                    <img src="" width="400px" alt="Club emblem" id="modalClubEmblem">
+                    <img src="" width="120px" alt="Club emblem" id="modalClubEmblem">
                     <h2 id="modalClubName">Club Naam</h2>
                 </div>
                 <div class="club-info">
@@ -120,21 +69,28 @@
                     <p><strong>Competitie:</strong> <span id="modalClubLeague">League</span></p>
                     <p><strong>Opgericht:</strong> <span id="modalClubFounded">Jaar</span></p>
                     <p><strong>Stadion:</strong> <span id="modalClubStadium">Stadion</span></p>
+                    <p><strong>Keer gezien:</strong> <span id="modalViewCount">0</span> keer</p>
                 </div>
                 <h3>Spelers</h3>
                 <div class="players-grid" id="modalClubPlayers">
-                    <!-- Players will be loaded dynamically -->
+                    <!-- Players worden geladen -->
                 </div>
                 <div class="modal-actions">
-                    <button class="gradient-button seen-btn" id="modalSeenBtn"><i class="fas fa-plus"></i> Gezien in het echt</button>
+                    <button class="gradient-button" id="modalSeenBtn"><i class="fas fa-plus"></i> Gezien in het echt</button>
                     <button class="gradient-button" id="modalCloseBtn">Sluiten</button>
                 </div>
             </div>
         </div>
 
+        <!-- No Favorites Message -->
         <div class="no-favorites" id="noFavoritesMessage" style="display: none;">
             <p>Je hebt nog geen favoriete clubs toegevoegd.</p>
             <p>Speel de <a href="/quiz">Quiz</a> of gebruik de zoekbalk hierboven om clubs toe te voegen!</p>
+        </div>
+
+        <!-- Loading indicator -->
+        <div id="loadingIndicator" style="display: none; text-align: center; padding: 2rem;">
+            <p>Laden...</p>
         </div>
     </main>
 
@@ -143,6 +99,44 @@
     </footer>
 
     <script>
+    let currentModalClub = null;
+
+    // Helper functies
+    function getToken() {
+        return localStorage.getItem('fifaNexusToken');
+    }
+
+    async function apiCall(endpoint, method = 'GET', data = null) {
+        const token = getToken();
+        const options = {
+            method,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        };
+
+        if (data) {
+            options.body = JSON.stringify(data);
+        }
+
+        const response = await fetch(endpoint, options);
+        return await response.json();
+    }
+
+    function showMessage(message, type = 'success') {
+        // Simpele alert - je kunt dit vervangen door een mooiere toast
+        if (type === 'error') {
+            alert('Fout: ' + message);
+        } else {
+            console.log(message);
+        }
+    }
+
+    function showLoading(show = true) {
+        document.getElementById('loadingIndicator').style.display = show ? 'block' : 'none';
+    }
+
     // Uitloggen
     document.getElementById('logoutBtn').addEventListener('click', async (e) => {
         e.preventDefault();
@@ -155,60 +149,284 @@
         window.location.href = '/login';
     });
 
-    // Club card click handlers
-    document.querySelectorAll('.club-card').forEach(card => {
-        card.addEventListener('click', (e) => {
-            if (!e.target.closest('.actions')) {
-                const clubId = card.dataset.clubId;
-                showClubDetails(clubId);
-            }
-        });
-    });
-
-    // Seen button handlers
-    document.querySelectorAll('.seen-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const card = e.target.closest('.club-card');
-            const seenCountElement = card.querySelector('.seen-count');
-            let count = parseInt(seenCountElement.textContent);
-            seenCountElement.textContent = count + 1;
+    // Laad favoriete clubs
+    async function loadFavoriteClubs() {
+        try {
+            showLoading(true);
+            const result = await apiCall('/api/clubs/favorites');
             
-            // Here you would update the count in the database
-            console.log('Updating seen count for club');
-        });
-    });
-
-    // Remove button handlers
-    document.querySelectorAll('.remove-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (confirm('Weet je zeker dat je deze club wilt verwijderen uit je favorieten?')) {
-                const card = e.target.closest('.club-card');
-                card.remove();
-                
-                // Here you would remove from database
-                console.log('Removing club from favorites');
+            if (result.success) {
+                displayFavoriteClubs(result.favoriteClubs);
+            } else {
+                showMessage(result.message || 'Fout bij laden favoriete clubs', 'error');
             }
-        });
-    });
+        } catch (error) {
+            console.error('Fout bij laden favoriete clubs:', error);
+            showMessage('Er is een fout opgetreden bij het laden van je favoriete clubs', 'error');
+        } finally {
+            showLoading(false);
+        }
+    }
 
-    // Add club functionality
+    // Toon favoriete clubs
+    function displayFavoriteClubs(clubs) {
+        const grid = document.getElementById('favoriteClubsGrid');
+        grid.innerHTML = '';
+
+        if (clubs.length === 0) {
+            document.getElementById('noFavoritesMessage').style.display = 'block';
+            return;
+        }
+
+        document.getElementById('noFavoritesMessage').style.display = 'none';
+
+        clubs.forEach(club => {
+            const clubCard = createClubCard(club, true);
+            grid.appendChild(clubCard);
+        });
+    }
+
+    // Maak club card element
+    function createClubCard(club, isFavorite = false) {
+        const card = document.createElement('div');
+        card.className = 'card club-card';
+        card.dataset.clubId = club.id;
+
+        card.innerHTML = `
+            <div class="image">
+                <img src="${club.logo}" alt="${club.name}" onerror="this.src='/images/default-club.png'">
+                <div class="overlay">
+                    <h3>${club.name}</h3>
+                    <p>${club.country}</p>
+                </div>
+            </div>
+            <div class="club-details">
+                <h3>${club.name}</h3>
+                <p>${club.league || club.country}</p>
+                ${isFavorite ? `
+                    <div class="stats">
+                        <span><i class="fas fa-eye"></i> Gezien: <span class="seen-count">${club.viewCount || 0}</span> keer</span>
+                    </div>
+                    <div class="actions">
+                        <button class="gradient-button seen-btn" title="Gezien in het echt"><i class="fas fa-plus"></i></button>
+                        <button class="gradient-button remove-btn" title="Verwijder uit favorieten"><i class="fas fa-trash"></i></button>
+                    </div>
+                ` : `
+                    <div class="actions">
+                        <button class="gradient-button add-btn" title="Toevoegen aan favorieten"><i class="fas fa-star"></i> Toevoegen</button>
+                    </div>
+                `}
+            </div>
+        `;
+
+        // Event listeners toevoegen
+        const cardImage = card.querySelector('.image');
+        cardImage.addEventListener('click', () => showClubDetails(club.id));
+
+        if (isFavorite) {
+            // Seen button
+            const seenBtn = card.querySelector('.seen-btn');
+            seenBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                incrementViewCount(club.id, card);
+            });
+
+            // Remove button
+            const removeBtn = card.querySelector('.remove-btn');
+            removeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                removeFavoriteClub(club.id, club.name);
+            });
+        } else {
+            // Add button
+            const addBtn = card.querySelector('.add-btn');
+            addBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                addToFavorites(club.id, club.name);
+            });
+        }
+
+        return card;
+    }
+
+    // Zoek clubs
+    async function searchClubs(query) {
+        try {
+            showLoading(true);
+            const result = await apiCall(`/api/clubs/search?query=${encodeURIComponent(query)}`);
+            
+            if (result.success) {
+                displaySearchResults(result.clubs);
+            } else {
+                showMessage(result.message || 'Fout bij zoeken clubs', 'error');
+            }
+        } catch (error) {
+            console.error('Fout bij zoeken clubs:', error);
+            showMessage('Er is een fout opgetreden bij het zoeken', 'error');
+        } finally {
+            showLoading(false);
+        }
+    }
+
+    // Toon zoekresultaten
+    function displaySearchResults(clubs) {
+        const resultsContainer = document.getElementById('searchResults');
+        const grid = document.getElementById('searchResultsGrid');
+        
+        grid.innerHTML = '';
+
+        if (clubs.length === 0) {
+            resultsContainer.style.display = 'none';
+            return;
+        }
+
+        resultsContainer.style.display = 'block';
+
+        clubs.forEach(club => {
+            const clubCard = createClubCard(club, false);
+            grid.appendChild(clubCard);
+        });
+    }
+
+    // Voeg club toe aan favorieten
+    async function addToFavorites(clubId, clubName) {
+        try {
+            const result = await apiCall('/api/clubs/favorites', 'POST', { clubId });
+            
+            if (result.success) {
+                showMessage(result.message);
+                loadFavoriteClubs(); // Herlaad favorieten
+                
+                // Verberg zoekresultaten
+                document.getElementById('searchResults').style.display = 'none';
+                document.getElementById('clubSearch').value = '';
+            } else {
+                showMessage(result.message || 'Fout bij toevoegen aan favorieten', 'error');
+            }
+        } catch (error) {
+            console.error('Fout bij toevoegen aan favorieten:', error);
+            showMessage('Er is een fout opgetreden', 'error');
+        }
+    }
+
+    // Verwijder club uit favorieten
+    async function removeFavoriteClub(clubId, clubName) {
+        if (!confirm(`Weet je zeker dat je ${clubName} wilt verwijderen uit je favorieten?`)) {
+            return;
+        }
+
+        try {
+            const result = await apiCall(`/api/clubs/favorites/${clubId}`, 'DELETE');
+            
+            if (result.success) {
+                showMessage(result.message);
+                loadFavoriteClubs(); // Herlaad favorieten
+            } else {
+                showMessage(result.message || 'Fout bij verwijderen uit favorieten', 'error');
+            }
+        } catch (error) {
+            console.error('Fout bij verwijderen uit favorieten:', error);
+            showMessage('Er is een fout opgetreden', 'error');
+        }
+    }
+
+    // Verhoog view count
+    async function incrementViewCount(clubId, cardElement) {
+        try {
+            const result = await apiCall(`/api/clubs/favorites/${clubId}/view`, 'PUT');
+            
+            if (result.success) {
+                // Update de teller in de UI
+                const countElement = cardElement.querySelector('.seen-count');
+                countElement.textContent = result.newViewCount;
+                
+                showMessage('Gezien teller verhoogd!');
+            } else {
+                showMessage(result.message || 'Fout bij verhogen teller', 'error');
+            }
+        } catch (error) {
+            console.error('Fout bij verhogen view count:', error);
+            showMessage('Er is een fout opgetreden', 'error');
+        }
+    }
+
+    // Toon club details in modal
+    async function showClubDetails(clubId) {
+        try {
+            showLoading(true);
+            const result = await apiCall(`/api/clubs/${clubId}`);
+            
+            if (result.success) {
+                const club = result.club;
+                currentModalClub = club;
+                
+                // Vul modal met club data
+                document.getElementById('modalClubEmblem').src = club.logo;
+                document.getElementById('modalClubName').textContent = club.name;
+                document.getElementById('modalClubCountry').textContent = club.country;
+                document.getElementById('modalClubLeague').textContent = club.league;
+                document.getElementById('modalClubFounded').textContent = club.founded || 'Onbekend';
+                document.getElementById('modalClubStadium').textContent = club.stadium || 'Onbekend';
+                document.getElementById('modalViewCount').textContent = club.viewCount || 0;
+                
+                // Toon spelers
+                const playersGrid = document.getElementById('modalClubPlayers');
+                playersGrid.innerHTML = '';
+                
+                if (club.players && club.players.length > 0) {
+                    club.players.forEach(player => {
+                        const playerCard = document.createElement('div');
+                        playerCard.className = 'player-card';
+                        playerCard.innerHTML = `
+                            <h4>${player.name}</h4>
+                            <p>${player.position} | ${player.nationality}</p>
+                            <p>Rating: ${player.rating}</p>
+                        `;
+                        playersGrid.appendChild(playerCard);
+                    });
+                } else {
+                    playersGrid.innerHTML = '<p>Geen speler informatie beschikbaar</p>';
+                }
+                
+                // Toon modal
+                document.getElementById('clubDetailsModal').style.display = 'block';
+            } else {
+                showMessage(result.message || 'Fout bij laden club details', 'error');
+            }
+        } catch (error) {
+            console.error('Fout bij laden club details:', error);
+            showMessage('Er is een fout opgetreden', 'error');
+        } finally {
+            showLoading(false);
+        }
+    }
+
+    // Event listeners
     document.getElementById('addClubBtn').addEventListener('click', () => {
-        const searchTerm = document.getElementById('clubSearch').value;
-        if (searchTerm.trim()) {
-            // Here you would search for clubs using the FUT Database API
-            console.log('Searching for club:', searchTerm);
+        const searchTerm = document.getElementById('clubSearch').value.trim();
+        if (searchTerm.length >= 2) {
+            searchClubs(searchTerm);
+        } else {
+            showMessage('Voer minimaal 2 karakters in', 'error');
         }
     });
 
-    // Modal functionality
-    function showClubDetails(clubId) {
-        // Here you would fetch club details from your API
-        document.getElementById('clubDetailsModal').style.display = 'block';
-    }
+    // Search bij Enter
+    document.getElementById('clubSearch').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            document.getElementById('addClubBtn').click();
+        }
+    });
 
-    document.querySelector('.close-modal').addEventListener('click', () => {
+    // Verberg zoekresultaten bij lege zoekbalk
+    document.getElementById('clubSearch').addEventListener('input', (e) => {
+        if (e.target.value.trim() === '') {
+            document.getElementById('searchResults').style.display = 'none';
+        }
+    });
+
+    // Modal functies
+    document.getElementById('closeClubModal').addEventListener('click', () => {
         document.getElementById('clubDetailsModal').style.display = 'none';
     });
 
@@ -216,10 +434,26 @@
         document.getElementById('clubDetailsModal').style.display = 'none';
     });
 
-    // Load user's favorite clubs on page load
+    document.getElementById('modalSeenBtn').addEventListener('click', () => {
+        if (currentModalClub) {
+            incrementViewCount(currentModalClub.id);
+            // Update modal view count
+            const currentCount = parseInt(document.getElementById('modalViewCount').textContent);
+            document.getElementById('modalViewCount').textContent = currentCount + 1;
+        }
+    });
+
+    // Modal sluiten bij klik buiten modal
+    window.addEventListener('click', (e) => {
+        const modal = document.getElementById('clubDetailsModal');
+        if (e.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+
+    // Laad favoriete clubs bij pagina load
     document.addEventListener('DOMContentLoaded', () => {
-        // This would normally fetch from your API
-        console.log('Loading user favorite clubs...');
+        loadFavoriteClubs();
     });
     </script>
 </body>

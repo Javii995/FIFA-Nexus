@@ -26,14 +26,35 @@
     </header>
 
     <main class="container">
-        <section class="quiz-intro">
+        <!-- Quiz Intro Section -->
+        <section class="quiz-intro" id="quizIntro">
             <h1>⚽ Welkom bij de FIFA Nexus Club Quiz! 🎮</h1>
             <div class="quiz-intro-content">
                 <h2>🔥 Test je kennis en word de ultieme voetbalexpert! 🔥</h2>
                 <p>Denk jij alle voetbalclubs en leagues te herkennen? Toon je skills, scoor punten en strijd voor de hoogste plek op het klassement! 🏆</p>
-                <p>🏅 **Jouw missie:** Selecteer de juiste emblemen, verzamel favorieten en vermijd je minst geliefde clubs!</p>
-                <p>👍 **Favoriet:** Klik op een club om deze aan je favorieten toe te voegen en bouw je droomteam!</p>
-                <p>👎 **Blacklist:** Markeer clubs die je liever niet ziet en ze verdwijnen uit je quiz!</p>
+                <p>🏅 <strong>Jouw missie:</strong> Selecteer de juiste emblemen, verzamel favorieten en vermijd je minst geliefde clubs!</p>
+                <p>👍 <strong>Favoriet:</strong> Klik op het embleem om deze aan je favorieten toe te voegen!</p>
+                <p>👎 <strong>Blacklist:</strong> Markeer clubs die je liever niet ziet en ze verdwijnen uit je quiz!</p>
+                <p>⚠️ <strong>Let op:</strong> Een fout antwoord beëindigt de quiz!</p>
+            </div>
+            
+            <!-- Quiz Statistieken -->
+            <div class="quiz-stats">
+                <h3>📊 Jouw Statistieken</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h4>Hoogste Score</h4>
+                        <p class="stat-number" id="displayHighScore">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Favoriete Clubs</h4>
+                        <p class="stat-number" id="displayFavoriteCount">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Blacklisted Clubs</h4>
+                        <p class="stat-number" id="displayBlacklistCount">0</p>
+                    </div>
+                </div>
             </div>
             
             <div class="quiz-actions">
@@ -41,12 +62,12 @@
             </div>
         </section>
 
-        <!-- Quiz Game Section (hidden initially) -->
+        <!-- Quiz Game Section -->
         <section class="quiz-game" id="quizGame" style="display: none;">
             <div class="quiz-header">
                 <div class="score-display">
                     <span>Score: <span id="currentScore">0</span></span>
-                    <span>High Score: <span id="highScore">0</span></span>
+                    <span>Vraag: <span id="questionNumber">1</span></span>
                 </div>
             </div>
 
@@ -68,7 +89,7 @@
                 </div>
 
                 <div class="quiz-options" id="quizOptions">
-                    <!-- Options will be dynamically generated -->
+                    <!-- Options worden dynamisch gegenereerd -->
                 </div>
             </div>
         </section>
@@ -78,7 +99,7 @@
             <h2>🎮 Quiz Voltooid! 🎮</h2>
             <div class="final-score">
                 <p>Jouw score: <span id="finalScore">0</span></p>
-                <p>Hoogste score: <span id="finalHighScore">0</span></p>
+                <p id="correctAnswerText" style="margin-top: 1rem; color: #ff6666;"></p>
             </div>
             
             <div id="newHighScoreSection" style="display: none;">
@@ -98,6 +119,7 @@
         <!-- Blacklist Reason Modal -->
         <div class="modal" id="blacklistModal" style="display: none;">
             <div class="modal-content">
+                <span class="close-modal" id="closeBlacklistModal">&times;</span>
                 <h3>Waarom wil je deze club blacklisten?</h3>
                 <textarea id="blacklistReason" placeholder="Voer je reden in..." maxlength="200"></textarea>
                 <div class="modal-actions">
@@ -105,6 +127,11 @@
                     <button id="cancelBlacklistBtn" class="button">Annuleren</button>
                 </div>
             </div>
+        </div>
+
+        <!-- Loading Indicator -->
+        <div id="loadingIndicator" style="display: none; text-align: center; padding: 2rem;">
+            <p>Laden van de volgende vraag...</p>
         </div>
     </main>
     
@@ -115,9 +142,40 @@
     <script>
     // Quiz JavaScript logica
     let currentScore = 0;
-    let highScore = 0;
+    let questionNumber = 1;
     let currentQuestion = null;
     let gameActive = false;
+    let currentQuestionData = null;
+
+    // Haal token op
+    function getToken() {
+        return localStorage.getItem('fifaNexusToken');
+    }
+
+    // API Helper functie
+    async function apiCall(endpoint, method = 'GET', data = null) {
+        const token = getToken();
+        const options = {
+            method,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        };
+
+        if (data) {
+            options.body = JSON.stringify(data);
+        }
+
+        const response = await fetch(endpoint, options);
+        return await response.json();
+    }
+
+    // Toon melding
+    function showMessage(message, type = 'success') {
+        // Je kunt hier een toast notification toevoegen
+        console.log(`${type.toUpperCase()}: ${message}`);
+    }
 
     // Uitloggen
     document.getElementById('logoutBtn').addEventListener('click', async (e) => {
@@ -132,100 +190,380 @@
     });
 
     // Start quiz
-    document.getElementById('startQuizBtn').addEventListener('click', () => {
-        startQuiz();
+    document.getElementById('startQuizBtn').addEventListener('click', async () => {
+        try {
+            document.getElementById('startQuizBtn').disabled = true;
+            document.getElementById('startQuizBtn').textContent = 'Quiz wordt gestart...';
+
+            const result = await apiCall('/api/quiz/start', 'POST');
+            
+            if (result.success) {
+                startQuiz(result);
+            } else {
+                showMessage(result.message || 'Fout bij starten quiz', 'error');
+                document.getElementById('startQuizBtn').disabled = false;
+                document.getElementById('startQuizBtn').textContent = '🎮 Start de uitdaging!';
+            }
+        } catch (error) {
+            console.error('Fout bij starten quiz:', error);
+            showMessage('Er is een fout opgetreden bij het starten van de quiz', 'error');
+            document.getElementById('startQuizBtn').disabled = false;
+            document.getElementById('startQuizBtn').textContent = '🎮 Start de uitdaging!';
+        }
     });
 
     // Play again
-    document.getElementById('playAgainBtn').addEventListener('click', () => {
-        startQuiz();
+    document.getElementById('playAgainBtn').addEventListener('click', async () => {
+        try {
+            const result = await apiCall('/api/quiz/start', 'POST');
+            
+            if (result.success) {
+                startQuiz(result);
+            } else {
+                showMessage(result.message || 'Fout bij herstarten quiz', 'error');
+            }
+        } catch (error) {
+            console.error('Fout bij herstarten quiz:', error);
+            showMessage('Er is een fout opgetreden bij het herstarten van de quiz', 'error');
+        }
     });
 
-    function startQuiz() {
-        currentScore = 0;
+    function startQuiz(quizData) {
+        currentScore = quizData.score || 0;
+        questionNumber = quizData.questionNumber || 1;
         gameActive = true;
         
-        // Hide intro and game over, show quiz
-        document.querySelector('.quiz-intro').style.display = 'none';
+        // Verberg intro en game over, toon quiz
+        document.getElementById('quizIntro').style.display = 'none';
         document.getElementById('gameOverSection').style.display = 'none';
         document.getElementById('quizGame').style.display = 'block';
         
-        // Load first question
-        loadNextQuestion();
-    }
-
-    function loadNextQuestion() {
-        // This would normally fetch from your API
-        // For now, we'll use placeholder logic
-        updateScoreDisplay();
+        // Reset start button
+        document.getElementById('startQuizBtn').disabled = false;
+        document.getElementById('startQuizBtn').textContent = '🎮 Start de uitdaging!';
         
-        // Placeholder for loading questions from FUT Database API
-        console.log('Loading next question...');
+        // Laad eerste vraag
+        loadQuestion(quizData.question);
     }
 
-    function updateScoreDisplay() {
+    function loadQuestion(questionData) {
+        currentQuestionData = questionData;
+        
+        // Update score en vraag nummer
         document.getElementById('currentScore').textContent = currentScore;
-        document.getElementById('highScore').textContent = highScore;
+        document.getElementById('questionNumber').textContent = questionNumber;
+        
+        // Update vraag tekst
+        const questionType = questionData.type === 'club' ? 'club' : 'league';
+        document.getElementById('questionText').textContent = `Welke ${questionType} hoort bij dit embleem?`;
+        
+        // Update embleem
+        document.getElementById('quizEmblem').src = questionData.image;
+        document.getElementById('quizEmblem').alt = `${questionType} embleem`;
+        
+        // Genereer opties
+        const optionsContainer = document.getElementById('quizOptions');
+        optionsContainer.innerHTML = '';
+        
+        questionData.options.forEach(option => {
+            const button = document.createElement('button');
+            button.className = 'quiz-option';
+            button.textContent = option.name;
+            button.dataset.optionId = option.id;
+            button.addEventListener('click', () => selectAnswer(option.id, option.name));
+            optionsContainer.appendChild(button);
+        });
     }
 
-    function endGame() {
-        gameActive = false;
+    async function selectAnswer(answerId, answerName) {
+        if (!gameActive) return;
         
-        // Hide quiz, show game over
-        document.getElementById('quizGame').style.display = 'none';
-        document.getElementById('gameOverSection').style.display = 'block';
-        
-        // Update final scores
-        document.getElementById('finalScore').textContent = currentScore;
-        document.getElementById('finalHighScore').textContent = highScore;
-        
-        // Check if new high score
-        if (currentScore > highScore) {
-            document.getElementById('newHighScoreSection').style.display = 'block';
-            highScore = currentScore;
+        try {
+            // Disable alle opties
+            document.querySelectorAll('.quiz-option').forEach(btn => {
+                btn.disabled = true;
+            });
+            
+            const result = await apiCall('/api/quiz/answer', 'POST', { answerId });
+            
+            if (result.success) {
+                if (result.gameOver) {
+                    // Quiz beëindigd
+                    endGame(result);
+                } else if (result.correct) {
+                    // Correct antwoord, ga naar volgende vraag
+                    currentScore = result.score;
+                    questionNumber = result.questionNumber;
+                    
+                    showMessage(`Correct! ${answerName}`, 'success');
+                    
+                    // Kort wachten en dan volgende vraag laden
+                    setTimeout(() => {
+                        loadQuestion(result.question);
+                    }, 1500);
+                }
+            } else {
+                showMessage(result.message || 'Fout bij verwerken antwoord', 'error');
+                // Re-enable opties
+                document.querySelectorAll('.quiz-option').forEach(btn => {
+                    btn.disabled = false;
+                });
+            }
+        } catch (error) {
+            console.error('Fout bij beantwoorden vraag:', error);
+            showMessage('Er is een fout opgetreden bij het verwerken van je antwoord', 'error');
+            // Re-enable opties
+            document.querySelectorAll('.quiz-option').forEach(btn => {
+                btn.disabled = false;
+            });
         }
     }
 
-    // Blacklist functionality
+    function endGame(gameResult) {
+        gameActive = false;
+        
+        // Verberg quiz, toon game over
+        document.getElementById('quizGame').style.display = 'none';
+        document.getElementById('gameOverSection').style.display = 'block';
+        
+        // Update final score
+        document.getElementById('finalScore').textContent = gameResult.finalScore || currentScore;
+        
+        // Toon correct antwoord als beschikbaar
+        if (gameResult.correctAnswer) {
+            document.getElementById('correctAnswerText').textContent = 
+                `Het juiste antwoord was: ${gameResult.correctAnswer.name}`;
+        }
+        
+        // Check voor nieuwe high score
+        if (gameResult.isNewHighScore) {
+            document.getElementById('newHighScoreSection').style.display = 'block';
+        } else {
+            document.getElementById('newHighScoreSection').style.display = 'none';
+        }
+        
+        // Herlaad statistieken
+        loadQuizStats();
+    }
+
+    // Favoriet toevoegen
+    document.getElementById('favoriteBtn').addEventListener('click', async () => {
+        if (!currentQuestionData) return;
+        
+        try {
+            // Zoek het juiste antwoord (het embleem dat wordt getoond)
+            const correctOption = currentQuestionData.options[0]; // Dit zou het juiste antwoord moeten zijn
+            
+            const result = await apiCall('/api/quiz/favorites/add', 'POST', {
+                clubId: correctOption.id,
+                clubName: correctOption.name
+            });
+            
+            if (result.success) {
+                showMessage(result.message, 'success');
+                
+                // Update favoriet knop visueel
+                const favoriteBtn = document.getElementById('favoriteBtn');
+                favoriteBtn.innerHTML = '<i class="fas fa-check"></i>';
+                favoriteBtn.style.background = '#4CAF50';
+                
+                setTimeout(() => {
+                    favoriteBtn.innerHTML = '<i class="fas fa-thumbs-up"></i>';
+                    favoriteBtn.style.background = '';
+                }, 2000);
+            } else {
+                showMessage(result.message || 'Fout bij toevoegen aan favorieten', 'error');
+            }
+        } catch (error) {
+            console.error('Fout bij toevoegen aan favorieten:', error);
+            showMessage('Er is een fout opgetreden', 'error');
+        }
+    });
+
+    // Blacklist functionaliteit
     document.getElementById('blacklistBtn').addEventListener('click', () => {
         document.getElementById('blacklistModal').style.display = 'block';
+    });
+
+    document.getElementById('closeBlacklistModal').addEventListener('click', () => {
+        document.getElementById('blacklistModal').style.display = 'none';
     });
 
     document.getElementById('cancelBlacklistBtn').addEventListener('click', () => {
         document.getElementById('blacklistModal').style.display = 'none';
     });
 
-    document.getElementById('confirmBlacklistBtn').addEventListener('click', () => {
-        const reason = document.getElementById('blacklistReason').value;
-        if (reason.trim()) {
-            // Here you would send the blacklist data to your API
-            console.log('Blacklisting with reason:', reason);
-            document.getElementById('blacklistModal').style.display = 'none';
-            document.getElementById('blacklistReason').value = '';
+    document.getElementById('confirmBlacklistBtn').addEventListener('click', async () => {
+        const reason = document.getElementById('blacklistReason').value.trim();
+        
+        if (!reason) {
+            showMessage('Voer een reden in', 'error');
+            return;
+        }
+        
+        if (!currentQuestionData) return;
+        
+        try {
+            const correctOption = currentQuestionData.options[0];
+            
+            const result = await apiCall('/api/quiz/blacklist/add', 'POST', {
+                clubId: correctOption.id,
+                clubName: correctOption.name,
+                reason: reason
+            });
+            
+            if (result.success) {
+                showMessage(result.message, 'success');
+                document.getElementById('blacklistModal').style.display = 'none';
+                document.getElementById('blacklistReason').value = '';
+                
+                // Update blacklist knop visueel
+                const blacklistBtn = document.getElementById('blacklistBtn');
+                blacklistBtn.innerHTML = '<i class="fas fa-check"></i>';
+                blacklistBtn.style.background = '#ff6666';
+                
+                setTimeout(() => {
+                    blacklistBtn.innerHTML = '<i class="fas fa-thumbs-down"></i>';
+                    blacklistBtn.style.background = '';
+                }, 2000);
+            } else {
+                showMessage(result.message || 'Fout bij toevoegen aan blacklist', 'error');
+            }
+        } catch (error) {
+            console.error('Fout bij toevoegen aan blacklist:', error);
+            showMessage('Er is een fout opgetreden', 'error');
         }
     });
 
-    // Favorite functionality
-    document.getElementById('favoriteBtn').addEventListener('click', () => {
-        // Here you would send the favorite data to your API
-        console.log('Adding to favorites');
-    });
-
-    // Save score functionality
+    // Save score functionaliteit
     document.getElementById('saveScoreBtn').addEventListener('click', async () => {
-        const playerName = document.getElementById('playerName').value;
-        if (playerName.trim()) {
-            // Here you would save the score to your API
-            console.log('Saving score:', currentScore, 'for player:', playerName);
-            document.getElementById('newHighScoreSection').style.display = 'none';
+        const playerName = document.getElementById('playerName').value.trim();
+        
+        if (!playerName) {
+            showMessage('Voer een naam in', 'error');
+            return;
+        }
+        
+        try {
+            const result = await apiCall('/api/quiz/save-score', 'POST', {
+                playerName: playerName,
+                score: currentScore
+            });
+            
+            if (result.success) {
+                showMessage(result.message, 'success');
+                document.getElementById('newHighScoreSection').style.display = 'none';
+            } else {
+                showMessage(result.message || 'Fout bij opslaan score', 'error');
+            }
+        } catch (error) {
+            console.error('Fout bij opslaan score:', error);
+            showMessage('Er is een fout opgetreden bij het opslaan van de score', 'error');
         }
     });
 
-    // Load user's high score on page load
+    // Laad quiz statistieken
+    async function loadQuizStats() {
+        try {
+            const result = await apiCall('/api/quiz/stats');
+            
+            if (result.success) {
+                const stats = result.stats;
+                document.getElementById('displayHighScore').textContent = stats.highScore || 0;
+                document.getElementById('displayFavoriteCount').textContent = stats.favoriteClubsCount || 0;
+                document.getElementById('displayBlacklistCount').textContent = stats.blacklistedClubsCount || 0;
+            }
+        } catch (error) {
+            console.error('Fout bij laden statistieken:', error);
+        }
+    }
+
+    // Modal sluiten bij klik buiten modal
+    window.addEventListener('click', (e) => {
+        const modal = document.getElementById('blacklistModal');
+        if (e.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+
+    // Laad statistieken bij pagina load
     document.addEventListener('DOMContentLoaded', () => {
-        // This would normally fetch from your API
-        highScore = 0; // Placeholder
-        updateScoreDisplay();
+        loadQuizStats();
+        
+        // Check of er een actieve quiz sessie is
+        checkActiveSession();
+    });
+
+    // Check voor actieve quiz sessie
+    async function checkActiveSession() {
+        try {
+            const result = await apiCall('/api/quiz/current-session');
+            
+            if (result.success && result.session) {
+                // Er is een actieve sessie, vraag of gebruiker wil doorgaan
+                const continueGame = confirm('Je hebt een actieve quiz sessie. Wil je doorgaan waar je gebleven was?');
+                
+                if (continueGame) {
+                    currentScore = result.session.score;
+                    questionNumber = result.session.questionNumber;
+                    startQuiz({
+                        question: result.session.question,
+                        score: result.session.score,
+                        questionNumber: result.session.questionNumber
+                    });
+                }
+            }
+        } catch (error) {
+            // Geen actieve sessie, dat is prima
+            console.log('Geen actieve quiz sessie gevonden');
+        }
+    }
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+        if (!gameActive) return;
+        
+        // Gebruik cijfer toetsen 1-4 voor antwoorden
+        const keyNum = parseInt(e.key);
+        if (keyNum >= 1 && keyNum <= 4) {
+            const options = document.querySelectorAll('.quiz-option');
+            if (options[keyNum - 1] && !options[keyNum - 1].disabled) {
+                options[keyNum - 1].click();
+            }
+        }
+        
+        // Spatiebalk voor favoriet
+        if (e.code === 'Space') {
+            e.preventDefault();
+            document.getElementById('favoriteBtn').click();
+        }
+        
+        // B voor blacklist
+        if (e.key.toLowerCase() === 'b') {
+            document.getElementById('blacklistBtn').click();
+        }
+    });
+
+    // Prevent right-click op embleem (om vals spelen te voorkomen)
+    document.getElementById('quizEmblem').addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+    });
+
+    // Easter egg: Konami code voor extra punten (↑↑↓↓←→←→BA)
+    let konamiCode = [];
+    const konamiSequence = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'KeyB', 'KeyA'];
+    
+    document.addEventListener('keydown', (e) => {
+        konamiCode.push(e.code);
+        if (konamiCode.length > konamiSequence.length) {
+            konamiCode.shift();
+        }
+        
+        if (konamiCode.length === konamiSequence.length && 
+            konamiCode.every((code, index) => code === konamiSequence[index])) {
+            showMessage('🎉 Konami code geactiveerd! Je bent een echte gamer!', 'success');
+            konamiCode = [];
+        }
     });
     </script>
 </body>

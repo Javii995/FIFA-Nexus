@@ -10,8 +10,9 @@ const router = express_1.default.Router();
 // Publieke routes
 router.post('/register', authController_1.register);
 router.post('/login', authController_1.login);
+router.post('/logout', authController_1.logout);
 router.post('/forgot-password', authController_1.forgotPassword);
 router.post('/reset-password/:token', authController_1.resetPassword);
 // Beveiligde routes
-router.get('/me', authMiddleware_1.authenticate, authController_1.getCurrentUser);
+router.get('/me', authMiddleware_1.authenticateApi, authController_1.getCurrentUser);
 exports.default = router;

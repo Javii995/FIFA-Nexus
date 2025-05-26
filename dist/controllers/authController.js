@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCurrentUser = exports.resetPassword = exports.forgotPassword = exports.login = exports.register = void 0;
+exports.getCurrentUser = exports.resetPassword = exports.forgotPassword = exports.logout = exports.login = exports.register = void 0;
 const User_1 = __importDefault(require("../models/User"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const crypto_1 = __importDefault(require("crypto"));
@@ -12,7 +12,7 @@ const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 // JWT Secret uit environment variables
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret';
-// Email configuratie
+// Email configuratie - FIX: createTransport ipv createTransporter
 const transporter = nodemailer_1.default.createTransport({
     service: 'gmail',
     auth: {
@@ -44,6 +44,11 @@ const register = async (req, res) => {
         await user.save();
         // Genereer JWT token
         const token = jsonwebtoken_1.default.sign({ id: user._id, username: user.username }, JWT_SECRET, { expiresIn: '1d' });
+        // Sla token op in cookie
+        res.cookie('token', token, {
+            httpOnly: true,
+            maxAge: 24 * 60 * 60 * 1000 // 1 dag
+        });
         res.status(201).json({
             success: true,
             message: 'Gebruiker succesvol geregistreerd',
@@ -83,6 +88,11 @@ const login = async (req, res) => {
         }
         // Genereer token
         const token = jsonwebtoken_1.default.sign({ id: user._id, username: user.username }, JWT_SECRET, { expiresIn: '1d' });
+        // Sla token op in cookie
+        res.cookie('token', token, {
+            httpOnly: true,
+            maxAge: 24 * 60 * 60 * 1000 // 1 dag
+        });
         res.status(200).json({
             success: true,
             message: 'Inloggen succesvol',
@@ -103,6 +113,16 @@ const login = async (req, res) => {
     }
 };
 exports.login = login;
+// Uitloggen
+const logout = (req, res) => {
+    // Clear de cookie
+    res.clearCookie('token');
+    res.status(200).json({
+        success: true,
+        message: 'Succesvol uitgelogd'
+    });
+};
+exports.logout = logout;
 // Wachtwoord vergeten functionaliteit
 const forgotPassword = async (req, res) => {
     try {

@@ -39,65 +39,40 @@
             }
         </style>
 
-        <!-- League Container (shown when user has a favorite league) -->
-        <div class="league-container" id="leagueContainer">
-            <img src="/images/league-laliga.png" width="200px" alt="La Liga" class="league-logo" id="leagueLogo">
-            <h2 class="league-title" id="leagueTitle">La Liga</h2>
-            <p class="league-info" id="leagueInfo"><strong>Info:</strong> Dit is jouw favoriete league! Bekijk hieronder de deelnemende clubs.</p>
+        <!-- League Container (getoond wanneer gebruiker een favoriete league heeft) -->
+        <div class="league-container" id="leagueContainer" style="display: none;">
+            <img src="" width="200px" alt="League embleem" class="league-logo" id="leagueLogo">
+            <h2 class="league-title" id="leagueTitle">League Naam</h2>
+            <p class="league-info" id="leagueInfo">
+                <strong>Land:</strong> <span id="leagueCountry">Land</span><br>
+                <strong>Opgericht:</strong> <span id="leagueFounded">Jaar</span><br>
+                <strong>Info:</strong> Dit is jouw favoriete league! Bekijk hieronder de deelnemende clubs.
+            </p>
             <button class="remove-button" id="removeLeagueBtn">
                 <span class="icon">❌</span>
                 Verwijder uit favorieten
             </button>
         </div>
 
-        <!-- Clubs Section (shown when user has a favorite league) -->
-        <div class="clubs-section" id="clubsSection">
+        <!-- Clubs Section (getoond wanneer gebruiker een favoriete league heeft) -->
+        <div class="clubs-section" id="clubsSection" style="display: none;">
             <h2 class="section-title">Clubs in deze league:</h2>
             
             <div class="grid" id="clubsGrid">
-                <!-- Placeholder clubs - in real implementation these would be loaded from API -->
-                <div class="card club-card" data-club-id="1">
-                    <div class="image" style="background-image: url('/images/barcelona.jpg');">
-                        <div class="overlay">
-                            <h3>FC Barcelona</h3>
-                            <p>Spanje</p>
-                        </div>
-                    </div>
-                    <h3>FC Barcelona</h3>
-                    <p>Land: Spanje</p>
-                    <button class="add-favorite">⭐ Toevoegen aan favorieten</button>
-                </div>
-                
-                <div class="card club-card" data-club-id="2">
-                    <div class="image" style="background-image: url('/images/realmadrid.png');">
-                        <div class="overlay">
-                            <h3>Real Madrid</h3>
-                            <p>Spanje</p>
-                        </div>
-                    </div>
-                    <h3>Real Madrid</h3>
-                    <p>Land: Spanje</p>
-                    <button class="add-favorite">⭐ Toevoegen aan favorieten</button>
-                </div>
-                
-                <div class="card club-card" data-club-id="3">
-                    <div class="image" style="background-image: url('/images/atletico.png');">
-                        <div class="overlay">
-                            <h3>Atlético Madrid</h3>
-                            <p>Spanje</p>
-                        </div>
-                    </div>
-                    <h3>Atlético Madrid</h3>
-                    <p>Land: Spanje</p>
-                    <button class="add-favorite">⭐ Toevoegen aan favorieten</button>
-                </div>
+                <!-- Clubs worden hier geladen -->
             </div>
         </div>
         
-        <!-- No League Message (shown when user has no favorite league) -->
+        <!-- No League Message (getoond wanneer gebruiker geen favoriete league heeft) -->
         <div class="no-league-message" id="noLeagueMessage" style="display: none;">
             <h2>Je hebt nog geen favoriete league</h2>
             <p>Speel de <a href="/quiz">Quiz</a> om een league toe te voegen als favoriet!</p>
+            <p>In de quiz krijg je league emblemen te zien, en kun je er maximaal 1 als favoriet instellen.</p>
+        </div>
+
+        <!-- Loading indicator -->
+        <div id="loadingIndicator" style="display: none; text-align: center; padding: 2rem;">
+            <p>Laden...</p>
         </div>
     </main>
 
@@ -106,6 +81,44 @@
     </footer>
 
     <script>
+    let currentFavoriteLeague = null;
+
+    // Helper functies
+    function getToken() {
+        return localStorage.getItem('fifaNexusToken');
+    }
+
+    async function apiCall(endpoint, method = 'GET', data = null) {
+        const token = getToken();
+        const options = {
+            method,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        };
+
+        if (data) {
+            options.body = JSON.stringify(data);
+        }
+
+        const response = await fetch(endpoint, options);
+        return await response.json();
+    }
+
+    function showMessage(message, type = 'success') {
+        // Simpele alert - je kunt dit vervangen door een mooiere toast
+        if (type === 'error') {
+            alert('Fout: ' + message);
+        } else {
+            console.log(message);
+        }
+    }
+
+    function showLoading(show = true) {
+        document.getElementById('loadingIndicator').style.display = show ? 'block' : 'none';
+    }
+
     // Uitloggen
     document.getElementById('logoutBtn').addEventListener('click', async (e) => {
         e.preventDefault();
@@ -118,63 +131,188 @@
         window.location.href = '/login';
     });
 
-    // Remove league from favorites
-    document.getElementById('removeLeagueBtn').addEventListener('click', () => {
-        if (confirm('Weet je zeker dat je deze league wilt verwijderen uit je favorieten?')) {
-            // Here you would remove from database
-            console.log('Removing league from favorites');
-            
-            // Hide league container and clubs section
-            document.getElementById('leagueContainer').style.display = 'none';
-            document.getElementById('clubsSection').style.display = 'none';
-            
-            // Show no league message
-            document.getElementById('noLeagueMessage').style.display = 'block';
-        }
-    });
-
-    // Add club to favorites
-    document.querySelectorAll('.add-favorite').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const card = e.target.closest('.club-card');
-            const clubName = card.querySelector('h3').textContent;
-            const clubId = card.dataset.clubId;
-            
-            // Here you would add to database
-            console.log('Adding club to favorites:', clubId, clubName);
-            
-            // Visual feedback
-            btn.textContent = '✅ Toegevoegd!';
-            btn.disabled = true;
-            
-            setTimeout(() => {
-                btn.textContent = '⭐ Toevoegen aan favorieten';
-                btn.disabled = false;
-            }, 2000);
-        });
-    });
-
-    // Load user's favorite league on page load
-    document.addEventListener('DOMContentLoaded', async () => {
+    // Laad favoriete league
+    async function loadFavoriteLeague() {
         try {
-            // This would normally fetch from your API
-            const userHasFavoriteLeague = true; // Placeholder logic
+            showLoading(true);
+            const result = await apiCall('/api/leagues/favorite');
             
-            if (!userHasFavoriteLeague) {
-                document.getElementById('leagueContainer').style.display = 'none';
-                document.getElementById('clubsSection').style.display = 'none';
-                document.getElementById('noLeagueMessage').style.display = 'block';
+            if (result.success) {
+                if (result.favoriteLeague) {
+                    displayFavoriteLeague(result.favoriteLeague);
+                } else {
+                    showNoLeagueMessage();
+                }
             } else {
-                // Load league data and clubs
-                console.log('Loading user favorite league and clubs...');
+                showMessage(result.message || 'Fout bij laden favoriete league', 'error');
+                showNoLeagueMessage();
             }
         } catch (error) {
-            console.error('Error loading favorite league:', error);
-            // Show no league message on error
-            document.getElementById('leagueContainer').style.display = 'none';
-            document.getElementById('clubsSection').style.display = 'none';
-            document.getElementById('noLeagueMessage').style.display = 'block';
+            console.error('Fout bij laden favoriete league:', error);
+            showMessage('Er is een fout opgetreden bij het laden van je favoriete league', 'error');
+            showNoLeagueMessage();
+        } finally {
+            showLoading(false);
         }
+    }
+
+    // Toon favoriete league
+    function displayFavoriteLeague(league) {
+        currentFavoriteLeague = league;
+        
+        // Verberg "geen league" bericht
+        document.getElementById('noLeagueMessage').style.display = 'none';
+        
+        // Vul league gegevens in
+        document.getElementById('leagueLogo').src = league.logo;
+        document.getElementById('leagueLogo').onerror = function() { 
+            this.src = '/images/default-league.png'; 
+        };
+        document.getElementById('leagueTitle').textContent = league.name;
+        document.getElementById('leagueCountry').textContent = league.country;
+        document.getElementById('leagueFounded').textContent = league.founded || 'Onbekend';
+        
+        // Toon league container
+        document.getElementById('leagueContainer').style.display = 'block';
+        
+        // Laad clubs in deze league
+        loadClubsInLeague(league.id);
+    }
+
+    // Toon "geen league" bericht
+    function showNoLeagueMessage() {
+        document.getElementById('leagueContainer').style.display = 'none';
+        document.getElementById('clubsSection').style.display = 'none';
+        document.getElementById('noLeagueMessage').style.display = 'block';
+    }
+
+    // Laad clubs in league
+    async function loadClubsInLeague(leagueId) {
+        try {
+            const result = await apiCall(`/api/leagues/${leagueId}/clubs`);
+            
+            if (result.success) {
+                displayClubsInLeague(result.clubs);
+            } else {
+                showMessage(result.message || 'Fout bij laden clubs in league', 'error');
+            }
+        } catch (error) {
+            console.error('Fout bij laden clubs in league:', error);
+            showMessage('Er is een fout opgetreden bij het laden van clubs', 'error');
+        }
+    }
+
+    // Toon clubs in league
+    function displayClubsInLeague(clubs) {
+        const grid = document.getElementById('clubsGrid');
+        grid.innerHTML = '';
+
+        if (clubs.length === 0) {
+            grid.innerHTML = '<p>Geen clubs gevonden in deze league.</p>';
+            document.getElementById('clubsSection').style.display = 'block';
+            return;
+        }
+
+        clubs.forEach(club => {
+            const clubCard = createClubCard(club);
+            grid.appendChild(clubCard);
+        });
+
+        document.getElementById('clubsSection').style.display = 'block';
+    }
+
+    // Maak club card
+    function createClubCard(club) {
+        const card = document.createElement('div');
+        card.className = 'card club-card';
+        card.dataset.clubId = club.id;
+
+        card.innerHTML = `
+            <div class="image">
+                <img src="${club.logo}" alt="${club.name}" onerror="this.src='/images/default-club.png'">
+                <div class="overlay">
+                    <h3>${club.name}</h3>
+                    <p>${club.country}</p>
+                </div>
+            </div>
+            <div class="club-details">
+                <h3>${club.name}</h3>
+                <p>Land: ${club.country}</p>
+                <div class="actions">
+                    <button class="add-favorite gradient-button" title="Toevoegen aan favorieten">
+                        <i class="fas fa-star"></i> Toevoegen aan favorieten
+                    </button>
+                </div>
+            </div>
+        `;
+
+        // Event listener voor toevoegen aan favorieten
+        const addButton = card.querySelector('.add-favorite');
+        addButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            addClubToFavorites(club.id, club.name, addButton);
+        });
+
+        return card;
+    }
+
+    // Voeg club toe aan favorieten
+    async function addClubToFavorites(clubId, clubName, buttonElement) {
+        try {
+            const result = await apiCall('/api/clubs/favorites', 'POST', { clubId });
+            
+            if (result.success) {
+                showMessage(result.message);
+                
+                // Update button visueel
+                buttonElement.innerHTML = '<i class="fas fa-check"></i> Toegevoegd!';
+                buttonElement.disabled = true;
+                buttonElement.style.background = '#4CAF50';
+                
+                setTimeout(() => {
+                    buttonElement.innerHTML = '<i class="fas fa-star"></i> Toevoegen aan favorieten';
+                    buttonElement.disabled = false;
+                    buttonElement.style.background = '';
+                }, 3000);
+            } else {
+                showMessage(result.message || 'Fout bij toevoegen aan favorieten', 'error');
+            }
+        } catch (error) {
+            console.error('Fout bij toevoegen aan favorieten:', error);
+            showMessage('Er is een fout opgetreden', 'error');
+        }
+    }
+
+    // Verwijder favoriete league
+    async function removeFavoriteLeague() {
+        if (!confirm('Weet je zeker dat je deze league wilt verwijderen uit je favorieten?')) {
+            return;
+        }
+
+        try {
+            const result = await apiCall('/api/leagues/favorite', 'DELETE');
+            
+            if (result.success) {
+                showMessage(result.message);
+                
+                // Reset de UI
+                currentFavoriteLeague = null;
+                showNoLeagueMessage();
+            } else {
+                showMessage(result.message || 'Fout bij verwijderen favoriete league', 'error');
+            }
+        } catch (error) {
+            console.error('Fout bij verwijderen favoriete league:', error);
+            showMessage('Er is een fout opgetreden', 'error');
+        }
+    }
+
+    // Event listeners
+    document.getElementById('removeLeagueBtn').addEventListener('click', removeFavoriteLeague);
+
+    // Laad favoriete league bij pagina load
+    document.addEventListener('DOMContentLoaded', () => {
+        loadFavoriteLeague();
     });
     </script>
 </body>

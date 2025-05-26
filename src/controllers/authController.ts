@@ -1,13 +1,5 @@
-// Uitloggen
-export const logout = (req: Request, res: Response): void => {
-    // Clear de cookie
-    res.clearCookie('token');
-
-    res.status(200).json({
-        success: true,
-        message: 'Succesvol uitgelogd'
-    });
-}; import { Request, Response } from 'express';
+// src/controllers/authController.ts
+import { Request, Response } from 'express';
 import User, { IUser } from '../models/User';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
@@ -19,7 +11,7 @@ dotenv.config();
 // JWT Secret uit environment variables
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret';
 
-// Email configuratie
+// Email configuratie - FIX: createTransport ipv createTransporter
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -139,6 +131,17 @@ export const login = async (req: Request, res: Response): Promise<void> => {
             message: 'Er is een fout opgetreden bij het inloggen'
         });
     }
+};
+
+// Uitloggen
+export const logout = (req: Request, res: Response): void => {
+    // Clear de cookie
+    res.clearCookie('token');
+
+    res.status(200).json({
+        success: true,
+        message: 'Succesvol uitgelogd'
+    });
 };
 
 // Wachtwoord vergeten functionaliteit
