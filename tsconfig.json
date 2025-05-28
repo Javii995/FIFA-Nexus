@@ -11,6 +11,10 @@
         "forceConsistentCasingInFileNames": true,
         "resolveJsonModule": true
     },
+    "scripts": {
+        "build": "tsc",
+        "start": "node dist/server.js"
+    },
     "include": [
         "src/**/*"
     ],
