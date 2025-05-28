@@ -4,7 +4,7 @@ import { authenticateApi } from '../middlewares/authMiddleware';
 
 const router = express.Router();
 
-// Publieke routes
+// Publiek
 router.post('/register', register);
 router.post('/login', login);
 router.post('/logout', logout);

@@ -11,18 +11,17 @@ function showMessage(message, isError = false) {
 
     messageContainer.appendChild(messageElement);
 
-    // Verwijder het bericht na 5 seconden (optioneel)
     setTimeout(() => {
         messageElement.remove();
     }, 5000);
 }
 
-// Opslaan van token in localStorage
+// token opslaan in localStorage
 function setToken(token) {
     localStorage.setItem('fifaNexusToken', token);
 }
 
-// Verkrijgen van token uit localStorage
+// token krijgen uit localStorage
 function getToken() {
     return localStorage.getItem('fifaNexusToken');
 }
@@ -55,8 +54,6 @@ if (loginForm) {
             if (data.success) {
                 showMessage(data.message);
                 setToken(data.token);
-
-                // Redirect naar dashboard na succesvol inloggen
                 setTimeout(() => {
                     window.location.href = '/dashboard';
                 }, 1000);
@@ -102,7 +99,6 @@ if (registerForm) {
                 showMessage(data.message);
                 setToken(data.token);
 
-                // Redirect naar dashboard na succesvol registreren
                 setTimeout(() => {
                     window.location.href = '/dashboard';
                 }, 1000);
@@ -116,7 +112,7 @@ if (registerForm) {
     });
 }
 
-// Forgot Password form handler
+// wachtwoord vergeten form handler
 const forgotPasswordForm = document.getElementById('forgotPasswordForm');
 if (forgotPasswordForm) {
     forgotPasswordForm.addEventListener('submit', async (e) => {
@@ -147,7 +143,6 @@ if (forgotPasswordForm) {
     });
 }
 
-// Reset Password form handler
 const resetPasswordForm = document.getElementById('resetPasswordForm');
 if (resetPasswordForm) {
     resetPasswordForm.addEventListener('submit', async (e) => {
@@ -157,7 +152,6 @@ if (resetPasswordForm) {
         const password = document.getElementById('password').value;
         const confirmPassword = document.getElementById('confirmPassword').value;
 
-        // Wachtwoord validatie
         if (password !== confirmPassword) {
             showMessage('Wachtwoorden komen niet overeen', true);
             return;
@@ -177,7 +171,6 @@ if (resetPasswordForm) {
             if (data.success) {
                 showMessage(data.message);
 
-                // Redirect naar login pagina na succesvol resetten
                 setTimeout(() => {
                     window.location.href = '/login';
                 }, 2000);
@@ -193,29 +186,23 @@ if (resetPasswordForm) {
 
 // Controle voor ingelogde gebruikers
 document.addEventListener('DOMContentLoaded', () => {
-    // Alleen redirects doen op login en register pagina's
-    // NIET op alle pagina's redirects doen om loops te voorkomen
     const currentPath = window.location.pathname;
     const token = getToken();
 
-    // Alleen op login/register pagina's en ALLEEN als we een token hebben, redirect naar dashboard
     if ((currentPath === '/login' || currentPath === '/register') && token) {
         window.location.href = '/dashboard';
     }
 
-    // Logout knop handler (indien aanwezig)
     const logoutBtn = document.getElementById('logoutBtn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
             removeToken();
-            // Ook de cookie verwijderen via een API call
             fetch('/api/auth/logout', { method: 'POST' })
                 .then(() => {
                     window.location.href = '/login';
                 })
                 .catch(error => {
                     console.error('Logout error:', error);
-                    // Toch doorsturen naar login zelfs als de API call faalt
                     window.location.href = '/login';
                 });
         });

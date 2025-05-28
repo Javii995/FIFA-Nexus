@@ -1,4 +1,3 @@
-// src/routes/clubRoutes.ts
 import express from 'express';
 import {
     getFavoriteClubs,

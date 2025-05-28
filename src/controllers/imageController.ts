@@ -1,4 +1,3 @@
-// src/controllers/imageController.ts - COMPLETE WITH LEAGUE IMAGES
 import { Request, Response } from 'express';
 import fetch from 'node-fetch';
 import dotenv from 'dotenv';
@@ -59,60 +58,6 @@ export const getClubImage = async (req: Request, res: Response): Promise<void> =
     } catch (error) {
         console.error('❌ Fout bij ophalen club image:', error);
         res.redirect('/images/default-club.png');
-    }
-};
-
-// Proxy league images van FUT API
-export const getLeagueImage = async (req: Request, res: Response): Promise<void> => {
-    try {
-        const { leagueId } = req.params;
-
-        console.log('🖼️ League image request voor league:', leagueId);
-
-        if (!leagueId) {
-            console.log('❌ Geen league ID');
-            res.status(400).send('League ID is verplicht');
-            return;
-        }
-
-        if (!FUT_API_KEY) {
-            console.log('❌ Geen API key, gebruik fallback');
-            res.redirect('/images/default-league.png');
-            return;
-        }
-
-        const imageUrl = `${FUT_API_BASE_URL}/leagues/${leagueId}/image`;
-        console.log('🌐 Ophalen league image van:', imageUrl);
-
-        const response = await fetch(imageUrl, {
-            headers: {
-                'X-AUTH-TOKEN': FUT_API_KEY
-            }
-        });
-
-        console.log('📡 League API Response status:', response.status);
-
-        if (!response.ok) {
-            console.log('❌ League API response niet OK, gebruik fallback');
-            res.redirect('/images/default-league.png');
-            return;
-        }
-
-        // Set juiste content type
-        const contentType = response.headers.get('content-type') || 'image/png';
-        res.setHeader('Content-Type', contentType);
-
-        // Cache de image voor 1 uur
-        res.setHeader('Cache-Control', 'public, max-age=3600');
-
-        console.log('✅ League image doorgestuurd, content-type:', contentType);
-
-        // Stream de image data
-        response.body?.pipe(res);
-
-    } catch (error) {
-        console.error('❌ Fout bij ophalen league image:', error);
-        res.redirect('/images/default-league.png');
     }
 };
 

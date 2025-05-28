@@ -1,4 +1,3 @@
-// src/routes/quizRoutes.ts
 import express from 'express';
 import {
     startQuiz,

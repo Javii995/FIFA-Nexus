@@ -1277,3 +1277,12 @@ body::before {
     background-clip: text;
     -webkit-text-fill-color: transparent;
 }
+
+.game-over-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}

@@ -1,4 +1,3 @@
-// src/routes/leagueRoutes.ts
 import express from 'express';
 import {
     getFavoriteLeague,

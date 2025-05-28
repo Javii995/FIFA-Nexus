@@ -6,18 +6,15 @@ dotenv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret';
 
-// Interface voor de JWT payload
 interface JwtPayload {
     id: string;
     username: string;
 }
 
-// Interface voor Request met user property
 export interface AuthRequest extends Request {
     user?: JwtPayload;
 }
 
-// Middleware om te controleren of een gebruiker is ingelogd voor pagina's
 export const authenticate = (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
         // Haal token op uit authorization header of uit de cookies
@@ -50,7 +47,6 @@ export const authenticate = (req: AuthRequest, res: Response, next: NextFunction
     }
 };
 
-// Aparte middleware voor API routes
 export const authenticateApi = (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
         // Haal token op uit authorization header of uit de cookies
@@ -73,7 +69,6 @@ export const authenticateApi = (req: AuthRequest, res: Response, next: NextFunct
         // Verifieer token
         const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
 
-        // Voeg user toe aan request object
         req.user = decoded;
 
         next();

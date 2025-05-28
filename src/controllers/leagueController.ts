@@ -1,4 +1,3 @@
-// src/controllers/leagueController.ts - COMPLETE FIXED VERSION
 import { Request, Response } from 'express';
 import User, { IUser } from '../models/User';
 import { AuthRequest } from '../middlewares/authMiddleware';

@@ -1,4 +1,3 @@
-// src/routes/blacklistRoutes.ts
 import express from 'express';
 import {
     getBlacklistedClubs,

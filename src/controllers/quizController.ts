@@ -1,4 +1,3 @@
-// src/controllers/quizController.ts - DEEL 1
 import { Request, Response } from 'express';
 import User, { IUser } from '../models/User';
 import { AuthRequest } from '../middlewares/authMiddleware';

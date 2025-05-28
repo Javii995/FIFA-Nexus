@@ -1,4 +1,3 @@
-// src/controllers/authController.ts
 import { Request, Response } from 'express';
 import User, { IUser } from '../models/User';
 import jwt from 'jsonwebtoken';
@@ -8,10 +7,8 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-// JWT Secret uit environment variables
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret';
 
-// Email configuratie - FIX: createTransport ipv createTransporter
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -20,7 +17,7 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-// Registratie van een nieuwe gebruiker
+// nieuwe gebruiker toevoegen
 export const register = async (req: Request, res: Response): Promise<void> => {
     try {
         const { username, email, password } = req.body;
@@ -38,7 +35,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
             return;
         }
 
-        // Maak nieuwe gebruiker aan
+        // aanmaken
         const user = new User({
             username,
             email,
@@ -47,17 +44,16 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
         await user.save();
 
-        // Genereer JWT token
+        // JWT token
         const token = jwt.sign(
             { id: user._id, username: user.username },
             JWT_SECRET,
             { expiresIn: '1d' }
         );
 
-        // Sla token op in cookie
         res.cookie('token', token, {
             httpOnly: true,
-            maxAge: 24 * 60 * 60 * 1000 // 1 dag
+            maxAge: 24 * 60 * 60 * 1000 // 1 dag token opslaan in lokaal geheugen
         });
 
         res.status(201).json({
@@ -74,12 +70,10 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     }
 };
 
-// Login functionaliteit
 export const login = async (req: Request, res: Response): Promise<void> => {
     try {
         const { username, password } = req.body;
 
-        // Zoek gebruiker op basis van username
         const user = await User.findOne({ username });
 
         if (!user) {
@@ -90,7 +84,6 @@ export const login = async (req: Request, res: Response): Promise<void> => {
             return;
         }
 
-        // Controleer wachtwoord
         const isMatch = await user.comparePassword(password);
 
         if (!isMatch) {
@@ -101,14 +94,12 @@ export const login = async (req: Request, res: Response): Promise<void> => {
             return;
         }
 
-        // Genereer token
         const token = jwt.sign(
             { id: user._id, username: user.username },
             JWT_SECRET,
             { expiresIn: '1d' }
         );
 
-        // Sla token op in cookie
         res.cookie('token', token, {
             httpOnly: true,
             maxAge: 24 * 60 * 60 * 1000 // 1 dag
