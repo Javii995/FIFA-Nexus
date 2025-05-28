@@ -1,4 +1,4 @@
-// src/controllers/clubController.ts
+// src/controllers/clubController.ts - COMPLETE FIXED VERSION
 import { Request, Response } from 'express';
 import User, { IUser } from '../models/User';
 import { AuthRequest } from '../middlewares/authMiddleware';
@@ -102,11 +102,16 @@ export const searchClubs = async (req: AuthRequest, res: Response): Promise<void
             return;
         }
 
+        if (!FUT_API_KEY) {
+            console.log('Geen API key, gebruik fallback data');
+            throw new Error('Geen API key');
+        }
+
         try {
             const response = await fetch(`${FUT_API_BASE_URL}/clubs/search?q=${encodeURIComponent(query)}&limit=10`, {
                 headers: {
-                    'Authorization': `Bearer ${FUT_API_KEY}`,
-                    'Content-Type': 'application/json'
+                    'accept': 'application/json',
+                    'X-AUTH-TOKEN': FUT_API_KEY
                 }
             });
 
@@ -373,10 +378,14 @@ export const getClubDetails = async (req: AuthRequest, res: Response): Promise<v
 // Helper functie om club details op te halen van API
 const getClubDetailsFromAPI = async (clubId: string): Promise<ClubDetails> => {
     try {
+        if (!FUT_API_KEY) {
+            throw new Error('Geen FUT API key geconfigureerd');
+        }
+
         const response = await fetch(`${FUT_API_BASE_URL}/clubs/${clubId}`, {
             headers: {
-                'Authorization': `Bearer ${FUT_API_KEY}`,
-                'Content-Type': 'application/json'
+                'accept': 'application/json',
+                'X-AUTH-TOKEN': FUT_API_KEY
             }
         });
 
@@ -392,8 +401,8 @@ const getClubDetailsFromAPI = async (clubId: string): Promise<ClubDetails> => {
         try {
             const playersResponse = await fetch(`${FUT_API_BASE_URL}/clubs/${clubId}/players?limit=10`, {
                 headers: {
-                    'Authorization': `Bearer ${FUT_API_KEY}`,
-                    'Content-Type': 'application/json'
+                    'accept': 'application/json',
+                    'X-AUTH-TOKEN': FUT_API_KEY
                 }
             });
 

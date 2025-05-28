@@ -1,4 +1,4 @@
-// src/controllers/blacklistController.ts
+// src/controllers/blacklistController.ts - COMPLETE FIXED VERSION
 import { Request, Response } from 'express';
 import User, { IUser } from '../models/User';
 import { AuthRequest } from '../middlewares/authMiddleware';
@@ -286,10 +286,14 @@ export const updateBlacklistReason = async (req: AuthRequest, res: Response): Pr
 // Helper functie om club details op te halen van API
 const getClubDetailsFromAPI = async (clubId: string): Promise<{ id: string; name: string; logo: string; country: string; league: string }> => {
     try {
+        if (!FUT_API_KEY) {
+            throw new Error('Geen FUT API key geconfigureerd');
+        }
+
         const response = await fetch(`${FUT_API_BASE_URL}/clubs/${clubId}`, {
             headers: {
-                'Authorization': `Bearer ${FUT_API_KEY}`,
-                'Content-Type': 'application/json'
+                'accept': 'application/json',
+                'X-AUTH-TOKEN': FUT_API_KEY
             }
         });
 

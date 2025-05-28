@@ -378,8 +378,7 @@ const FALLBACK_LEAGUES = [
         country: 'Europa'
     }
 ];
-// Haal clubs op van de FUT Database API met correcte authenticatie
-// Vervang de hele getRandomClubs functie met deze versie:
+// Haal clubs op van de FUT Database API met IMAGE PROXY
 const getRandomClubs = async (count = 20) => {
     var _a, _b, _c;
     try {
@@ -407,18 +406,18 @@ const getRandomClubs = async (count = 20) => {
         if (data.items && Array.isArray(data.items) && data.items.length > 0) {
             const clubs = data.items.slice(0, count).map((club) => {
                 var _a, _b;
-                // Gebruik de echte club ID en maak fallback URL voor als image niet werkt
+                // Gebruik de echte club ID en maak IMAGE PROXY URL
                 const clubId = (_a = club.id) === null || _a === void 0 ? void 0 : _a.toString();
                 return {
                     id: clubId || Math.random().toString(),
                     name: club.name || 'Onbekende Club',
-                    logo: clubId ? `/api/images/clubs/${clubId}` : '/images/default-club.png', // ← DEZE LIJN AANGEPAST
+                    logo: clubId ? `/api/images/clubs/${clubId}` : '/images/default-club.png', // ✅ IMAGE PROXY
                     country: 'API Club',
                     league: ((_b = club.league) === null || _b === void 0 ? void 0 : _b.toString()) || 'API League'
                 };
             });
             console.log(`✅ ${clubs.length} clubs succesvol opgehaald van FUT API`);
-            console.log('Eerste club ID:', (_b = clubs[0]) === null || _b === void 0 ? void 0 : _b.id, 'Logo:', (_c = clubs[0]) === null || _c === void 0 ? void 0 : _c.logo); // ← DEBUG INFO
+            console.log('Eerste club ID:', (_b = clubs[0]) === null || _b === void 0 ? void 0 : _b.id, 'Logo:', (_c = clubs[0]) === null || _c === void 0 ? void 0 : _c.logo);
             return clubs;
         }
         else {
@@ -433,16 +432,46 @@ const getRandomClubs = async (count = 20) => {
         return shuffled.slice(0, Math.min(count, shuffled.length));
     }
 };
-// Probeer leagues van API, anders fallback
+// Probeer leagues van API met IMAGE PROXY
 const getRandomLeagues = async (count = 10) => {
     try {
-        console.log('📦 Gebruik fallback leagues...');
-        const shuffled = [...FALLBACK_LEAGUES].sort(() => 0.5 - Math.random());
-        return shuffled.slice(0, Math.min(count, shuffled.length));
+        if (!FUT_API_KEY) {
+            throw new Error('Geen API key');
+        }
+        console.log('Proberen leagues op te halen van FUT API...');
+        const response = await (0, node_fetch_1.default)(`${FUT_API_BASE_URL}/leagues?limit=${count}`, {
+            headers: {
+                'accept': 'application/json',
+                'X-AUTH-TOKEN': FUT_API_KEY
+            }
+        });
+        if (!response.ok) {
+            throw new Error('API leagues fout');
+        }
+        const data = await response.json();
+        if (data.items && Array.isArray(data.items) && data.items.length > 0) {
+            const leagues = data.items.map((league) => {
+                var _a;
+                const leagueId = (_a = league.id) === null || _a === void 0 ? void 0 : _a.toString();
+                return {
+                    id: leagueId || Math.random().toString(),
+                    name: league.name || 'Onbekende League',
+                    logo: leagueId ? `/api/images/leagues/${leagueId}` : '/images/default-league.png', // ✅ IMAGE PROXY
+                    country: league.country || 'Onbekend'
+                };
+            });
+            console.log(`✅ ${leagues.length} leagues succesvol opgehaald van FUT API`);
+            return leagues;
+        }
+        else {
+            throw new Error('Geen leagues gevonden');
+        }
     }
     catch (error) {
         console.error('Fout bij ophalen leagues, gebruik fallback:', error);
-        return FALLBACK_LEAGUES.slice(0, count);
+        console.log('📦 Gebruik fallback leagues...');
+        const shuffled = [...FALLBACK_LEAGUES].sort(() => 0.5 - Math.random());
+        return shuffled.slice(0, Math.min(count, shuffled.length));
     }
 };
 // Genereer een quiz vraag
@@ -573,6 +602,7 @@ const startQuiz = async (req, res) => {
     }
 };
 exports.startQuiz = startQuiz;
+// src/controllers/quizController.ts - DEEL 2
 // Beantwoord quiz vraag
 const answerQuestion = async (req, res) => {
     var _a;

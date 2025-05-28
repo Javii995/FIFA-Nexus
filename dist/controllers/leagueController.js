@@ -195,10 +195,13 @@ exports.getAllLeagues = getAllLeagues;
 const getLeagueDetailsFromAPI = async (leagueId) => {
     var _a;
     try {
+        if (!FUT_API_KEY) {
+            throw new Error('Geen FUT API key geconfigureerd');
+        }
         const response = await (0, node_fetch_1.default)(`${FUT_API_BASE_URL}/leagues/${leagueId}`, {
             headers: {
-                'Authorization': `Bearer ${FUT_API_KEY}`,
-                'Content-Type': 'application/json'
+                'accept': 'application/json',
+                'X-AUTH-TOKEN': FUT_API_KEY
             }
         });
         if (!response.ok) {
@@ -271,10 +274,13 @@ const getLeagueDetailsFromAPI = async (leagueId) => {
 const getClubsInLeagueFromAPI = async (leagueId) => {
     var _a;
     try {
+        if (!FUT_API_KEY) {
+            throw new Error('Geen FUT API key geconfigureerd');
+        }
         const response = await (0, node_fetch_1.default)(`${FUT_API_BASE_URL}/leagues/${leagueId}/clubs`, {
             headers: {
-                'Authorization': `Bearer ${FUT_API_KEY}`,
-                'Content-Type': 'application/json'
+                'accept': 'application/json',
+                'X-AUTH-TOKEN': FUT_API_KEY
             }
         });
         if (!response.ok) {
@@ -317,10 +323,13 @@ const getClubsInLeagueFromAPI = async (leagueId) => {
 const getAllLeaguesFromAPI = async () => {
     var _a;
     try {
+        if (!FUT_API_KEY) {
+            throw new Error('Geen FUT API key geconfigureerd');
+        }
         const response = await (0, node_fetch_1.default)(`${FUT_API_BASE_URL}/leagues?limit=50`, {
             headers: {
-                'Authorization': `Bearer ${FUT_API_KEY}`,
-                'Content-Type': 'application/json'
+                'accept': 'application/json',
+                'X-AUTH-TOKEN': FUT_API_KEY
             }
         });
         if (!response.ok) {

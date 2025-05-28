@@ -1,4 +1,4 @@
-// src/controllers/leagueController.ts
+// src/controllers/leagueController.ts - COMPLETE FIXED VERSION
 import { Request, Response } from 'express';
 import User, { IUser } from '../models/User';
 import { AuthRequest } from '../middlewares/authMiddleware';
@@ -227,10 +227,14 @@ export const getAllLeagues = async (req: AuthRequest, res: Response): Promise<vo
 // Helper functie om league details op te halen van API
 const getLeagueDetailsFromAPI = async (leagueId: string): Promise<LeagueDetails> => {
     try {
+        if (!FUT_API_KEY) {
+            throw new Error('Geen FUT API key geconfigureerd');
+        }
+
         const response = await fetch(`${FUT_API_BASE_URL}/leagues/${leagueId}`, {
             headers: {
-                'Authorization': `Bearer ${FUT_API_KEY}`,
-                'Content-Type': 'application/json'
+                'accept': 'application/json',
+                'X-AUTH-TOKEN': FUT_API_KEY
             }
         });
 
@@ -309,10 +313,14 @@ const getLeagueDetailsFromAPI = async (leagueId: string): Promise<LeagueDetails>
 // Helper functie om clubs in een league op te halen
 const getClubsInLeagueFromAPI = async (leagueId: string): Promise<ClubInLeague[]> => {
     try {
+        if (!FUT_API_KEY) {
+            throw new Error('Geen FUT API key geconfigureerd');
+        }
+
         const response = await fetch(`${FUT_API_BASE_URL}/leagues/${leagueId}/clubs`, {
             headers: {
-                'Authorization': `Bearer ${FUT_API_KEY}`,
-                'Content-Type': 'application/json'
+                'accept': 'application/json',
+                'X-AUTH-TOKEN': FUT_API_KEY
             }
         });
 
@@ -357,10 +365,14 @@ const getClubsInLeagueFromAPI = async (leagueId: string): Promise<ClubInLeague[]
 // Helper functie om alle leagues op te halen
 const getAllLeaguesFromAPI = async (): Promise<{ id: string; name: string; logo: string; country: string }[]> => {
     try {
+        if (!FUT_API_KEY) {
+            throw new Error('Geen FUT API key geconfigureerd');
+        }
+
         const response = await fetch(`${FUT_API_BASE_URL}/leagues?limit=50`, {
             headers: {
-                'Authorization': `Bearer ${FUT_API_KEY}`,
-                'Content-Type': 'application/json'
+                'accept': 'application/json',
+                'X-AUTH-TOKEN': FUT_API_KEY
             }
         });
 

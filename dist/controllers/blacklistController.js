@@ -252,10 +252,13 @@ exports.updateBlacklistReason = updateBlacklistReason;
 const getClubDetailsFromAPI = async (clubId) => {
     var _a;
     try {
+        if (!FUT_API_KEY) {
+            throw new Error('Geen FUT API key geconfigureerd');
+        }
         const response = await (0, node_fetch_1.default)(`${FUT_API_BASE_URL}/clubs/${clubId}`, {
             headers: {
-                'Authorization': `Bearer ${FUT_API_KEY}`,
-                'Content-Type': 'application/json'
+                'accept': 'application/json',
+                'X-AUTH-TOKEN': FUT_API_KEY
             }
         });
         if (!response.ok) {

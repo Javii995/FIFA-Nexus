@@ -1,4 +1,4 @@
-// src/controllers/quizController.ts
+// src/controllers/quizController.ts - DEEL 1
 import { Request, Response } from 'express';
 import User, { IUser } from '../models/User';
 import { AuthRequest } from '../middlewares/authMiddleware';
@@ -407,8 +407,7 @@ const FALLBACK_LEAGUES: LeagueData[] = [
     }
 ];
 
-// Haal clubs op van de FUT Database API met correcte authenticatie
-// Vervang de hele getRandomClubs functie met deze versie:
+// Haal clubs op van de FUT Database API met IMAGE PROXY
 const getRandomClubs = async (count: number = 20): Promise<ClubData[]> => {
     try {
         if (!FUT_API_KEY) {
@@ -440,19 +439,19 @@ const getRandomClubs = async (count: number = 20): Promise<ClubData[]> => {
 
         if (data.items && Array.isArray(data.items) && data.items.length > 0) {
             const clubs = data.items.slice(0, count).map((club: any) => {
-                // Gebruik de echte club ID en maak fallback URL voor als image niet werkt
+                // Gebruik de echte club ID en maak IMAGE PROXY URL
                 const clubId = club.id?.toString();
                 return {
                     id: clubId || Math.random().toString(),
                     name: club.name || 'Onbekende Club',
-                    logo: '/images/default-club.png',
+                    logo: clubId ? `/api/images/clubs/${clubId}` : '/images/default-club.png', // ✅ IMAGE PROXY
                     country: 'API Club',
                     league: club.league?.toString() || 'API League'
                 };
             });
 
             console.log(`✅ ${clubs.length} clubs succesvol opgehaald van FUT API`);
-            console.log('Eerste club ID:', clubs[0]?.id, 'Logo:', clubs[0]?.logo); // ← DEBUG INFO
+            console.log('Eerste club ID:', clubs[0]?.id, 'Logo:', clubs[0]?.logo);
             return clubs;
         } else {
             throw new Error('Geen clubs gevonden in API response');
@@ -467,15 +466,49 @@ const getRandomClubs = async (count: number = 20): Promise<ClubData[]> => {
     }
 };
 
-// Probeer leagues van API, anders fallback
+// Probeer leagues van API met IMAGE PROXY
 const getRandomLeagues = async (count: number = 10): Promise<LeagueData[]> => {
     try {
+        if (!FUT_API_KEY) {
+            throw new Error('Geen API key');
+        }
+
+        console.log('Proberen leagues op te halen van FUT API...');
+
+        const response = await fetch(`${FUT_API_BASE_URL}/leagues?limit=${count}`, {
+            headers: {
+                'accept': 'application/json',
+                'X-AUTH-TOKEN': FUT_API_KEY
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('API leagues fout');
+        }
+
+        const data = await response.json();
+
+        if (data.items && Array.isArray(data.items) && data.items.length > 0) {
+            const leagues = data.items.map((league: any) => {
+                const leagueId = league.id?.toString();
+                return {
+                    id: leagueId || Math.random().toString(),
+                    name: league.name || 'Onbekende League',
+                    logo: leagueId ? `/api/images/leagues/${leagueId}` : '/images/default-league.png', // ✅ IMAGE PROXY
+                    country: league.country || 'Onbekend'
+                };
+            });
+
+            console.log(`✅ ${leagues.length} leagues succesvol opgehaald van FUT API`);
+            return leagues;
+        } else {
+            throw new Error('Geen leagues gevonden');
+        }
+    } catch (error) {
+        console.error('Fout bij ophalen leagues, gebruik fallback:', error);
         console.log('📦 Gebruik fallback leagues...');
         const shuffled = [...FALLBACK_LEAGUES].sort(() => 0.5 - Math.random());
         return shuffled.slice(0, Math.min(count, shuffled.length));
-    } catch (error) {
-        console.error('Fout bij ophalen leagues, gebruik fallback:', error);
-        return FALLBACK_LEAGUES.slice(0, count);
     }
 };
 
@@ -631,6 +664,7 @@ export const startQuiz = async (req: AuthRequest, res: Response): Promise<void> 
         });
     }
 };
+// src/controllers/quizController.ts - DEEL 2
 
 // Beantwoord quiz vraag
 export const answerQuestion = async (req: AuthRequest, res: Response): Promise<void> => {

@@ -78,11 +78,15 @@ const searchClubs = async (req, res) => {
             });
             return;
         }
+        if (!FUT_API_KEY) {
+            console.log('Geen API key, gebruik fallback data');
+            throw new Error('Geen API key');
+        }
         try {
             const response = await (0, node_fetch_1.default)(`${FUT_API_BASE_URL}/clubs/search?q=${encodeURIComponent(query)}&limit=10`, {
                 headers: {
-                    'Authorization': `Bearer ${FUT_API_KEY}`,
-                    'Content-Type': 'application/json'
+                    'accept': 'application/json',
+                    'X-AUTH-TOKEN': FUT_API_KEY
                 }
             });
             if (!response.ok) {
@@ -326,10 +330,13 @@ exports.getClubDetails = getClubDetails;
 const getClubDetailsFromAPI = async (clubId) => {
     var _a, _b;
     try {
+        if (!FUT_API_KEY) {
+            throw new Error('Geen FUT API key geconfigureerd');
+        }
         const response = await (0, node_fetch_1.default)(`${FUT_API_BASE_URL}/clubs/${clubId}`, {
             headers: {
-                'Authorization': `Bearer ${FUT_API_KEY}`,
-                'Content-Type': 'application/json'
+                'accept': 'application/json',
+                'X-AUTH-TOKEN': FUT_API_KEY
             }
         });
         if (!response.ok) {
@@ -342,8 +349,8 @@ const getClubDetailsFromAPI = async (clubId) => {
         try {
             const playersResponse = await (0, node_fetch_1.default)(`${FUT_API_BASE_URL}/clubs/${clubId}/players?limit=10`, {
                 headers: {
-                    'Authorization': `Bearer ${FUT_API_KEY}`,
-                    'Content-Type': 'application/json'
+                    'accept': 'application/json',
+                    'X-AUTH-TOKEN': FUT_API_KEY
                 }
             });
             if (playersResponse.ok) {
